@@ -1,0 +1,282 @@
+================================================================================
+  ADVANCED TAPE RESTORER v2.0 - TROUBLESHOOTING GUIDE
+================================================================================
+
+This guide covers common issues and their solutions.
+
+================================================================================
+  INSTALLATION ISSUES
+================================================================================
+
+PROBLEM: "vspipe not found" or "VapourSynth not installed"
+SOLUTION:
+  1. Run "1_Install_VapourSynth.bat" as Administrator
+  2. Restart your computer after installation
+  3. Run "3_Check_Prerequisites.bat" to verify
+  
+  If still not working:
+  - Check if installed: C:\Program Files\VapourSynth
+  - Reinstall VapourSynth using "Install for all users" option
+  - Add manually to PATH: C:\Program Files\VapourSynth\core64
+
+PROBLEM: "ffmpeg not found" or "FFmpeg not installed"
+SOLUTION:
+  1. Run "2_Install_FFmpeg.bat" as Administrator
+  2. Close and reopen command prompt
+  3. Run "3_Check_Prerequisites.bat" to verify
+  
+  If still not working:
+  - Check if installed: C:\ffmpeg\bin
+  - Add manually to PATH (see manual instructions in install script)
+  - Restart Windows
+
+PROBLEM: Application won't start or crashes immediately
+SOLUTION:
+  1. Check last_error_log.txt in application folder
+  2. Verify prerequisites with "3_Check_Prerequisites.bat"
+  3. Install Visual C++ Redistributable 2015-2022:
+     https://aka.ms/vs/17/release/vc_redist.x64.exe
+  4. Try running from command prompt to see error messages:
+     Advanced_Tape_Restorer_v2.exe
+
+================================================================================
+  PROCESSING ISSUES
+================================================================================
+
+PROBLEM: Processing fails with "Script generation error"
+SOLUTION:
+  - Enable "Debug Logging" in settings
+  - Check last_error_log.txt for details
+  - Verify input file is valid video (test with VLC player)
+  - Try different source filter: ffms2 → lsmas → bestsource
+  - Disable advanced filters temporarily to isolate issue
+
+PROBLEM: "QTGMC plugin not found" error
+SOLUTION:
+  1. Install havsfunc plugin:
+     - Open command prompt as Administrator
+     - Run: python -m pip install vsrepo
+     - Run: vsrepo.py install havsfunc
+  2. Restart application
+
+PROBLEM: Very slow processing (slower than expected)
+SOLUTION:
+  - Use faster QTGMC preset: "Fast" or "Medium"
+  - Disable GPU denoising if you don't have NVIDIA GPU
+  - Disable AI upscaling (very slow on CPU)
+  - Close other applications
+  - Check CPU/RAM usage in Task Manager
+  - Ensure source video is on fast drive (SSD better than HDD)
+
+PROBLEM: Processing stops at 0% or hangs
+SOLUTION:
+  - Check if input file is corrupted (test in VLC)
+  - Try re-encoding source file first with VLC or FFmpeg
+  - Disable field order auto-detection (set manually to TFF or BFF)
+  - Try different source filter
+  - Check disk space (need 2-3x source file size free)
+
+PROBLEM: "Out of memory" error
+SOLUTION:
+  - Close other applications
+  - Use faster QTGMC preset (uses less RAM)
+  - Disable temporal/chroma denoise
+  - Process shorter segments of video
+  - Add more RAM to system (16GB+ recommended)
+
+================================================================================
+  QUALITY ISSUES
+================================================================================
+
+PROBLEM: Output video has combing artifacts (visible lines)
+SOLUTION:
+  - Field order may be wrong
+  - Try Auto-Detect field order
+  - If Auto-Detect fails, manually try TFF then BFF
+  - Ensure QTGMC deinterlacing is enabled
+  - Use "Slow" or "Slower" QTGMC preset
+
+PROBLEM: Output video is blurry or soft
+SOLUTION:
+  - Don't use AI upscaling on already-upscaled video
+  - Try higher QTGMC preset: "Slow" or "Slower"
+  - Reduce denoise strength
+  - Check if source video is already low quality
+  - Try different resize algorithm: Lanczos or Spline
+
+PROBLEM: Severe blocking or compression artifacts in output
+SOLUTION:
+  - Lower CRF value (18→16→14 for higher quality)
+  - Use slower FFmpeg preset
+  - Try lossless: FFV1 codec or ProRes 422
+  - Check source quality (may be inherit in source)
+
+PROBLEM: Colors look wrong or washed out
+SOLUTION:
+  - Try "Fix Chroma Shift" option
+  - Adjust color correction settings
+  - Check if source uses wrong colorspace
+  - Ensure TV-range not being converted to PC-range
+
+PROBLEM: Video is wrong aspect ratio (stretched/squished)
+SOLUTION:
+  - Use "Keep (Default)" aspect ratio mode first
+  - For VHS, try "Auto" mode
+  - Manually set correct aspect ratio if needed
+  - Check source PAR (pixel aspect ratio) in MediaInfo
+
+================================================================================
+  CAPTURE ISSUES
+================================================================================
+
+PROBLEM: No capture devices detected
+SOLUTION:
+  - Connect capture device before starting application
+  - Click "Refresh Devices" button
+  - Check Device Manager for device status
+  - Install capture device drivers from manufacturer
+  - Try different USB port (USB 3.0 recommended)
+  - Restart computer with device connected
+
+PROBLEM: Capture starts but no video/audio recorded
+SOLUTION:
+  - Check if tape is playing in source device
+  - Verify input selection on capture device
+  - Try different capture codec (HuffYUV → FFV1)
+  - Check disk space (need lots for lossless capture)
+  - Ensure capture device drivers are up to date
+
+PROBLEM: Dropped frames during capture
+SOLUTION:
+  - Capture to fast drive (SSD highly recommended)
+  - Close all other applications
+  - Disable anti-virus real-time scanning temporarily
+  - Use lower resolution if capture card supports it
+  - Try different USB port or controller
+
+PROBLEM: Audio/video sync issues after capture
+SOLUTION:
+  - Use recommended codec: HuffYUV or FFV1
+  - Ensure capture device is properly grounded
+  - Check USB cable quality (replace if needed)
+  - Capture at native resolution of source
+  - Try audio device sync settings in capture tab
+
+PROBLEM: DV capture not working (FireWire)
+SOLUTION:
+  - Check FireWire cable and connection
+  - Ensure DV camera is in "Play/VCR" mode
+  - Install legacy FireWire drivers on Windows 10/11
+  - Try different FireWire port
+  - Some newer PCs don't have FireWire (need PCIe card)
+
+================================================================================
+  PERFORMANCE OPTIMIZATION
+================================================================================
+
+SLOW PROCESSING? Try these in order:
+
+1. Use faster QTGMC preset:
+   Placebo → Slower → Slow → Medium → Fast → Draft
+   
+2. Disable optional filters:
+   - AI upscaling (very slow)
+   - Temporal/chroma denoise
+   - Debanding
+   - Stabilization
+
+3. Use faster codec:
+   FFV1 → ProRes → H.265 → H.264 (fastest)
+
+4. Process overnight:
+   - Add files to batch queue
+   - Start before going to bed
+   - Check progress in morning
+
+5. Hardware upgrade considerations:
+   - CPU: More cores = faster (8+ cores ideal)
+   - RAM: 16GB minimum, 32GB recommended
+   - GPU: NVIDIA for GPU-accelerated features
+   - Storage: SSD for temp files and output
+
+================================================================================
+  ERROR MESSAGES
+================================================================================
+
+ERROR: "Failed to initialize VapourSynth"
+CAUSE: VapourSynth not properly installed or wrong version
+FIX: Reinstall VapourSynth R68 or newer
+
+ERROR: "Source filter failed to open file"
+CAUSE: Unsupported video format or corrupted file
+FIX: Try different source filter or re-encode source first
+
+ERROR: "QTGMC: This plugin requires havsfunc"
+CAUSE: Missing havsfunc plugin
+FIX: Run: vsrepo.py install havsfunc
+
+ERROR: "FFmpeg encoding failed with exit code 1"
+CAUSE: Invalid codec settings or output path
+FIX: Check output path is writable, try different codec
+
+ERROR: "Access denied" when writing output
+CAUSE: Output location requires admin rights or is read-only
+FIX: Choose different output folder (Documents, Desktop, etc.)
+
+ERROR: "Field order detection inconclusive"
+CAUSE: Video has mixed field orders or is progressive
+FIX: Manually set field order to TFF, BFF, or Disabled
+
+ERROR: "GPU not detected for CUDA processing"
+CAUSE: No NVIDIA GPU or drivers not installed
+FIX: Use CPU denoising instead or install NVIDIA drivers
+
+================================================================================
+  GETTING MORE HELP
+================================================================================
+
+1. Check last_error_log.txt in application folder
+2. Enable Debug Logging and review detailed output
+3. Review included documentation:
+   - USER_GUIDE.pdf
+   - CAPTURE_GUIDE.pdf
+   - ARCHITECTURE.md
+
+4. Check logs folder for detailed processing logs
+
+5. Common tools for diagnosis:
+   - MediaInfo: Check video properties
+   - VLC Player: Test if video plays correctly
+   - Device Manager: Check hardware status
+
+================================================================================
+  SYSTEM REQUIREMENTS REMINDER
+================================================================================
+
+MINIMUM:
+  - Windows 10 64-bit
+  - Intel Core i5 (4 cores) or equivalent
+  - 8 GB RAM
+  - 50 GB free disk space
+  - Integrated graphics
+
+RECOMMENDED:
+  - Windows 10/11 64-bit
+  - Intel Core i7/i9 (8+ cores) or AMD Ryzen
+  - 16-32 GB RAM
+  - 200+ GB free disk space (SSD)
+  - NVIDIA GPU (for GPU-accelerated features)
+
+FOR CAPTURE:
+  - USB 3.0 port for capture devices
+  - FireWire port for DV capture (or PCIe card)
+  - Fast storage (SSD) for capture destination
+
+================================================================================
+
+Still having issues? Check the VapourSynth and FFmpeg documentation for
+advanced troubleshooting:
+  - http://www.vapoursynth.com/doc/
+  - https://ffmpeg.org/documentation.html
+
+================================================================================

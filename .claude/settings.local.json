@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m flake8:*)",
+      "Bash(findstr:*)",
+      "Bash(cat:*)",
+      "Bash(python -m black:*)",
+      "Bash(find:*)",
+      "Bash(timeout /t 30 /nobreak)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

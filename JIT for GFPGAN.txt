@@ -1,0 +1,104 @@
+*** Begin Patch
+*** Update File: ai_models/engines/face_gfpgan.py
+@@
+-        # Initialize JIT optimizer for 20-30% performance boost
+-        # TODO: FUTURE ENHANCEMENT - Re-enable JIT compilation for GFPGAN
+-        #
+-        # Current issue: Signature mismatch between traced and actual calls
+-        # - torch.jit.trace() records: forward(self, x)  # 2 arguments
+-        #   (Only sees what happens during example_input tracing)
+-        # - Actual GFPGAN calls: forward(self, x, return_rgb=True, weight=0.5)  # 4 arguments
+-        #   (Uses keyword arguments for RGB format and enhancement strength)
+-        # - Error: "forward() expected at most 2 arguments but received 4"
+-        #
+-        # Why this happens:
+-        # - torch.jit.trace() only records operations during the example run
+-        # - If kwargs aren't passed during tracing, TorchScript doesn't know they exist
+-        # - The compiled model is "frozen" with the traced signature
+-        # - Later calls with additional kwargs fail at runtime
+-        #
+-        # Potential solutions:
+-        # 1. Use torch.jit.script instead of torch.jit.trace (may not support all GFPGAN features)
+-        # 2. Create wrapper function that always calls with same signature (normalize inputs)
+-        # 3. Modify GFPGAN's forward() to use instance variables instead of kwargs
+-        # 4. Trace with all arguments: jit.trace(model, example_inputs={'x': x, 'return_rgb': True, 'weight': 0.5})
+-        # 5. Patch TorchScript to handle variable arguments (very complex)
+-        #
+-        # Expected benefit: ~20-30% speedup on GFPGAN enhancement (2-3 min savings on 60min tape)
+-        # Priority: Low (face detection pre-filter already provides major optimization)
+-        self.jit_optimizer = None
+-        self.use_jit = False
+-        print(f"[SmartGFP] JIT compilation disabled (TODO: signature mismatch - see code comments)")
+-        # try:
+-        #     from core.torch_jit_optimizer import get_jit_optimizer
+-        #     self.jit_optimizer = get_jit_optimizer(enabled=True)
+-        #     self.use_jit = True
+-        #     print(f"[SmartGFP] JIT compilation enabled (expect 20-30% speed boost)")
+-        # except Exception as e:
+-        #     self.jit_optimizer = None
+-        #     self.use_jit = False
+-        #     print(f"[SmartGFP] JIT compilation disabled: {e}")
++        # Initialize JIT optimizer for 20-30% performance boost.
++        # Use a fixed-signature wrapper so TorchScript sees only (x) inputs.
++        self.jit_optimizer = None
++        self.use_jit = False
++        try:
++            from core.torch_jit_optimizer import get_jit_optimizer
++            self.jit_optimizer = get_jit_optimizer(enabled=True)
++            self.use_jit = True
++            print(f"[SmartGFP] JIT compilation enabled (expect 20-30% speed boost)")
++        except Exception as e:
++            self.jit_optimizer = None
++            self.use_jit = False
++            print(f"[SmartGFP] JIT compilation disabled: {e}")
+@@
+-        # Apply JIT compilation to GFPGAN model for performance boost
+-        if self.use_jit and hasattr(self.restorer, 'gfpgan'):
+-            try:
+-                import torch
+-                # Create example input for JIT tracing (typical face size 512x512)
+-                example_input = torch.randn(1, 3, 512, 512).to(self.device)
+-                
+-                print(f"[SmartGFP] Compiling model with TorchScript JIT...")
+-                self.restorer.gfpgan = self.jit_optimizer.compile_model(
+-                    self.restorer.gfpgan,
+-                    example_input,
+-                    model_name="gfpgan",
+-                    optimization_level="aggressive",
+-                    use_cache=True
+-                )
+-                print(f"[SmartGFP] バ" JIT compilation complete")
+-            except Exception as e:
+-                print(f"[SmartGFP] JIT compilation failed (using eager mode): {e}")
++        # Apply JIT compilation to GFPGAN model for performance boost.
++        # Wrap the model so TorchScript sees a fixed forward(x) signature.
++        if self.use_jit and hasattr(self.restorer, 'gfpgan'):
++            try:
++                import torch
++
++                class _GFPGANJITWrapper(torch.nn.Module):
++                    def __init__(self, model, return_rgb=True, weight=0.5):
++                        super().__init__()
++                        self.model = model
++                        self.return_rgb = return_rgb
++                        self.weight = weight
++
++                    def forward(self, x):
++                        return self.model(x, return_rgb=self.return_rgb, weight=self.weight)
++
++                example_input = torch.randn(1, 3, 512, 512).to(self.device)
++                wrapped = _GFPGANJITWrapper(self.restorer.gfpgan, return_rgb=True, weight=0.5)
++
++                print(f"[SmartGFP] Compiling model with TorchScript JIT...")
++                compiled = self.jit_optimizer.compile_model(
++                    wrapped,
++                    example_input,
++                    model_name="gfpgan_wrapped",
++                    optimization_level="aggressive",
++                    use_cache=True
++                )
++                self.restorer.gfpgan = compiled
++                print(f"[SmartGFP] バ" JIT compilation complete")
++            except Exception as e:
++                print(f"[SmartGFP] JIT compilation failed (using eager mode): {e}")
+*** End Patch

@@ -1,0 +1,109 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec.bak
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.virtualenvs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-specific
+*.log
+*.tmp
+*.temp
+
+# User settings (don't commit these)
+restoration_settings.json
+restoration_presets.json
+
+# Build artifacts
+dist/
+build/
+*.exe
+*.msi
+
+# VapourSynth scripts (temporary)
+*.vpy
+
+# Captured/processed video files
+*.avi
+*.mp4
+*.mov
+*.mkv
+*.m2ts
+*.ts
+!test_*.mp4
+
+# AI Models (too large for git)
+ai_models/models/*.pth
+ai_models/models/*.onnx
+ai_models/models/*.pt
+!ai_models/models/registry.yaml
+
+# Checkpoints (user-specific)
+checkpoints/
+*.checkpoint
+
+# Temp directories
+temp/
+tmp/
+TEMP/
+TMP/
+
+# System files
+Thumbs.db
+Desktop.ini
+
+# FFmpeg
+ffmpeg.exe
+ffprobe.exe
+ffplay.exe
+
+# Distribution packages
+*.zip
+*_Release/
+
+# Test outputs
+test_output/
+test_captures/
+
+# PyInstaller temp
+_MEI*/
+
+# Windows shortcuts
+*.lnk

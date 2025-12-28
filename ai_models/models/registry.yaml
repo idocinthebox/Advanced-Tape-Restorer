@@ -1,0 +1,167 @@
+
+models:
+
+  - id: basicvsrpp_general_x2
+    engine: basicvsrpp
+    friendly_name: "BasicVSR++ Deblur x2"
+    version: "1.0"
+    license: "Apache-2.0"
+    license_url: "https://www.apache.org/licenses/LICENSE-2.0"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "github_repo"
+      url: "https://github.com/HolyWu/vs-basicvsrpp"
+      note: "Install: pip install vsbasicvsrpp, then run: python -m vsbasicvsrpp to download all models. Dropbox backup: https://www.dropbox.com/scl/fo/et750c684zat1yuzxyuko/AJ3-qhzJJ35yi415L-aeVVY?rlkey=988zohpwy7pm4wp8ztlz3c56i&dl=0"
+    files: []
+    engine_args:
+      model: "bd"
+      scale: 2
+
+  - id: realesrgan_x2plus
+    engine: realesrgan
+    friendly_name: "RealESRGAN General x4"
+    version: "0.2.5"
+    license: "BSD-3-Clause"
+    license_url: "https://opensource.org/licenses/BSD-3-Clause"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "github_release"
+      url: "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-general-x4v3.pth"
+    files:
+      - path: "realesrgan/RealESRGAN_x4plus.pth"
+        sha256: null
+    engine_args:
+      model: "realesr_general_x4v3"
+      scale: 4
+
+  - id: swinir_real_sr_x4
+    engine: swinir
+    friendly_name: "SwinIR RealSR x4"
+    version: "1.0"
+    license: "Apache-2.0"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "github_repo"
+      url: "https://github.com/HolyWu/vs-swinir"
+      note: "Install: pip install vsswinir. Models auto-download on first use or run: python -m vsswinir"
+    files: []
+    engine_args:
+      model: "real_sr_x4"
+      scale: 4
+
+  - id: rife_v4_22
+    engine: rife
+    friendly_name: "RIFE v4.22"
+    version: "4.22"
+    license: "MIT"
+    license_url: "https://opensource.org/licenses/MIT"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "github_repo"
+      url: "https://github.com/HolyWu/vs-rife"
+      note: "Install: pip install vsrife. Models auto-download on first use or run: python -m vsrife"
+    files: []
+    engine_args:
+      model: "4.22"
+      factor_num: 2
+      factor_den: 1
+
+  - id: deoldify_video_model
+    engine: deoldify
+    friendly_name: "DeOldify Video Model"
+    version: "1.0"
+    license: "MIT"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "manual"
+      url: null
+    files:
+      - path: "deoldify/video/video_model.pth"
+        sha256: null
+    engine_args:
+      model: "video"
+      render_factor: 35
+
+  - id: svd_restore_1_1
+    engine: svdiffusion
+    friendly_name: "Stable Video Diffusion (Restore Mode)"
+    version: "1.1"
+    license: "Stability AI License"
+    license_url: "https://github.com/Stability-AI/stable-video-diffusion"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "manual"
+      url: "https://huggingface.co/stabilityai/stable-video-diffusion-img2vid"
+      note: "Complex setup: requires diffusers library, multiple model files. See HuggingFace page for instructions. Not recommended for typical restoration workflows."
+    files: []
+    engine_args:
+      strength: 0.35
+
+  - id: gfpgan_v1_3
+    engine: gfpgan
+    friendly_name: "GFPGAN v1.3 (Face Enhancement)"
+    version: "1.3"
+    license: "Apache-2.0"
+    license_url: "https://www.apache.org/licenses/LICENSE-2.0"
+    non_commercial: false
+    default_for_engine: true
+    source:
+      type: "github_release"
+      url: "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth"
+    files:
+      - path: "gfpgan/GFPGANv1.3.pth"
+        sha256: "c953a88f2727c85c3d9ae72e2bd4846bbaf59fe6972ad94130e23e7017524a70"
+    engine_args:
+      model_path: "GFPGANv1.3.pth"
+      upscale: 2
+      arch: "clean"
+      channel_multiplier: 2
+      bg_upsampler: null
+
+  - id: gfpgan_v1_4
+    engine: gfpgan
+    friendly_name: "GFPGAN v1.4 (Face Enhancement)"
+    version: "1.4"
+    license: "Apache-2.0"
+    license_url: "https://www.apache.org/licenses/LICENSE-2.0"
+    non_commercial: false
+    default_for_engine: false
+    source:
+      type: "github_release"
+      url: "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth"
+    files:
+      - path: "gfpgan/GFPGANv1.4.pth"
+        sha256: "e2cd4703ab14f4d01fd1383a8a8b266f9a5833dacee8e6a79d3bf21a1b6be5ad"
+    engine_args:
+      model_path: "GFPGANv1.4.pth"
+      upscale: 2
+      arch: "clean"
+      channel_multiplier: 2
+      bg_upsampler: null
+
+  - id: gfpgan_restoreformer
+    engine: gfpgan
+    friendly_name: "GFPGAN RestoreFormer (Best Quality)"
+    version: "1.0"
+    license: "Apache-2.0"
+    license_url: "https://www.apache.org/licenses/LICENSE-2.0"
+    non_commercial: false
+    default_for_engine: false
+    source:
+      type: "github_release"
+      url: "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/RestoreFormer.pth"
+    files:
+      - path: "gfpgan/RestoreFormer.pth"
+        sha256: "07404d446d62ca3d5ed38b1de09a947a1e77d46dbccec961a74d713a8f24ace0"
+    engine_args:
+      model_path: "RestoreFormer.pth"
+      upscale: 2
+      arch: "RestoreFormer"
+      channel_multiplier: 2
+      bg_upsampler: null

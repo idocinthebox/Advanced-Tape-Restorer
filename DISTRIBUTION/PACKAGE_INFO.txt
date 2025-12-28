@@ -1,0 +1,20 @@
+Advanced Tape Restorer v3.1.0
+
+Build Date: ~0,8--
+Package: Advanced_Tape_Restorer_v3.1.0_Complete_~0,8
+EXE Size:  MB
+
+Contents:
+  - Application executable
+  - Automatic prerequisite installer
+  - Manual installation scripts
+  - Complete documentation
+  - Sample presets
+
+Installation:
+  1. Extract this ZIP to any folder
+  2. Run Setup\Install_Prerequisites_Auto.bat
+  3. Restart computer
+  4. Launch Advanced_Tape_Restorer_v3.exe
+
+Support: See Documentation folder
