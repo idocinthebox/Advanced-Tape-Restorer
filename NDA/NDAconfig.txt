@@ -1,8 +1,0 @@
-from nda_enforcement.hooks import on_app_start
-from nda_enforcement.pyside6_clickwrap import run_nda_clickwrap
-
-allowed, msg = on_app_start(cfg, tester_id)
-if not allowed:
-    ok = run_nda_clickwrap(cfg, tester_id, nda_pdf_path="NDA_Hardened_Final_Tightened.pdf")
-    if not ok:
-        raise SystemExit(1)  # tester declined
