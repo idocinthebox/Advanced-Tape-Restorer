@@ -1,0 +1,67 @@
+================================================================================
+  ADVANCED TAPE RESTORER - CHANGELOG
+================================================================================
+
+This file documents the major changes, new features, and bug fixes for each
+version of the Advanced Tape Restorer application.
+
+---
+
+### Version 3.0.0 (November 2025)
+
+**Major Features & Architectural Changes:**
+
+*   **New Command-Line Interface (CLI) & Test Suite:**
+    *   Added a `--test` flag to `main.py` to run a full suite of automated tests for core modules, capture modules, and the API.
+    *   Introduced `test_modules.py` to validate application components, ensuring greater stability and easier debugging.
+*   **New Developer API:**
+    *   Exposed core and capture functionalities through a new API, allowing for programmatic control and scripting.
+    *   Modules like `VideoProcessor` and `CaptureDeviceManager` are now easily importable.
+*   **Improved Application Cleanup:**
+    *   Implemented an automatic cleanup mechanism (`cleanup_pyinstaller_temp`) in `main.py` to remove old PyInstaller temporary folders (`_MEI*`) on startup and exit, keeping the user's system clean.
+*   **Documentation Overhaul:**
+    *   Updated all documentation files (`README.txt`, `INSTALLATION_GUIDE.txt`, etc.) to reflect the new 3.0.0 version and features.
+    *   Standardized versioning across all project files.
+
+**Bug Fixes:**
+
+*   Fixed version number inconsistencies between the source code and documentation.
+
+---
+
+### Version 2.0.0 (January 2025)
+
+**Major Features:**
+
+*   **Complete Modular Rewrite:** The entire application was refactored from a single monolithic script into a modular architecture (Core, GUI, Capture) for improved maintainability and extensibility.
+*   **AI-Powered Features (NVIDIA GPU Required):**
+    *   Added AI upscaling with RealESRGAN.
+    *   Added AI frame interpolation with RIFE.
+    *   Added AI artifact removal with ProPainter.
+*   **New Capture Module:**
+    *   Introduced support for analog video capture (VHS, Hi8, etc.) via USB/PCIe devices.
+    *   Added lossless DV capture via FireWire (IEEE 1394).
+*   **Enhanced Restoration & Encoding:**
+    *   Added BM3D GPU denoising for faster performance.
+    *   Implemented automatic field order detection.
+    *   Improved batch processing with ETA estimation.
+
+**Bug Fixes:**
+
+*   Fixed various bugs related to AI feature activation and memory management with ProRes codecs.
+*   Resolved a `UnicodeEncodeError` that occurred during processing.
+
+---
+
+### Version 1.0.0 (2023)
+
+*   **Initial Public Release:**
+    *   Professional deinterlacing using QTGMC with multiple quality presets.
+    *   Core restoration features including denoising and artifact removal.
+    *   Batch processing capabilities for handling multiple files.
+    *   Ability to save and load restoration presets.
+    *   Live preview functionality.
+
+================================================================================
+
+*For future roadmap items, please refer to the project's official repository.*

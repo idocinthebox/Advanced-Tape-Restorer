@@ -1,0 +1,9 @@
+[project]
+name = "ati-theatre-pipeline"
+version = "0.1.0"
+description = "Capture ingest + VapourSynth(QTGMC) + FFmpeg batch pipeline with profiling and Resolve LUT generation."
+requires-python = ">=3.10"
+dependencies = ["pyyaml", "numpy"]
+
+[project.scripts]
+ati-pipe = "pipeline.cli:main"

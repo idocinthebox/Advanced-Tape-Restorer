@@ -1,0 +1,717 @@
+
+Doom9's Forum (https://forum.doom9.org/index.php)
+-   VapourSynth (https://forum.doom9.org/forumdisplay.php?f=82)
+-   -   BestSource2 - The Bestest Source with Fast Seeking (https://forum.doom9.org/showthread.php?t=185408)
+
+Myrsloik	22nd March 2024 18:28
+BestSource2 - The Bestest Source with Fast Seeking
+ 
+Some of you tried and used the original BestSource. Some of you complained that it was slow or was missing RFF and CFR modes. All of this has been fixed. With hardware decoding support intact.
+
+Run your seek tests. Do your worst. This should surpass all previously released source filters with only slightly slower indexing and marginally higher ram usage.
+
+
+BestSource releases
+
+Myrsloik	8th April 2024 20:24
+R2 RC2 released. Keep testing.
+
+amayra	10th April 2024 19:38
+thanks for i find any issues do i report it here or in github ?
+
+Myrsloik	10th April 2024 19:49
+Github is preferred. If it's a specific avisynth issue wait for rc3 since lots of bugs were found there
+
+rgr	11th April 2024 11:07
+So I'll wait for RC3 with my VFR file ;)
+
+Myrsloik	17th April 2024 09:32
+And we have a proper R2 release!
+
+tormento	17th April 2024 12:22
+First release with fast seeking. Works completely differently from R1 and is now mostly a drop-in replacement for FFMS2.
+
+That's a bold statement :)
+
+flossy_cake	22nd April 2024 08:45
+Thanks for this source filter, I'm always interested in having more source filters available in case a file doesn't play nice with another filter so it's much appreciated.
+
+These are the source filters I've been using so far and I feel reasonably familiar with their performance and compatibility with the files I play for realtime screening with MPC-HC (mostly MPEG2 DVD remux files (mkv and vob), x264 and x265 with the usual audio formats like AC3, DTS, AAC, MP3, FLAC).
+LWLibavVideoSource, LWLibavAudioSource (my "go to" option)
+FFVideoSource, FFAudioSource (StvG's fork as it fixes an issue with rffmode in the official build)
+Mpeg2Source (DG's MPEG2 filter, only compatible with .vob MPEG2's but does them very competently)
+DGSource (DG's Nvidia GPU decoding filter, compatible with more codecs and containers eg. MPEG2 remuxed to mkv)
+
+And now I add to that list BSVideoSource and BSAudioSource - we shall see whether it can outdo StvG's FFMS2 fork and possibly LWLibav!
+
+Some issues...
+"BSVideoSource does not have a named argument variableformat"
+
+The cachepath argument forces this new behaviour of subdirectories based on the source folder structure. As I require full control over where my index files go and their names, please could we have an option to specify file path like FFMS2 and LWlibav, eg. cachepath="C:\MyVideos\MyCacheFiles\S01E01 Hello World.bsindex". Currently I can only specify a parent folder and then BS creates its own folder substructure inside that parent folder.
+
+With this test file (MPEG2 video remuxed from DVD, contains repeat field flags that must be obeyed so please set rff=true when testing) ...for some reason BS sets the frames to FieldBased (by this I mean clip.IsFieldBased==true as reported on info(), not to be confused with the frame property called "_FieldBased").
+
+This means filters like for example Bob() won't do anything at all cause Bob() only operates on framebased clips (where framebased means each frame is not an individual field, according to Avisynth's definition here).
+
+I thought this would be an easy workaround by just calling AssumeFrameBased() in Avisynth but that function also forces the field order to bottom field first (by this I mean clip.GetParity==false as reported on info()).
+
+So the workaround becomes a bit convoluted: (1) get the original correct field order using clip.GetParity(), (2) call AssumeFrameBased(), (3) restore the field order from step 1 using AssumeTFF/BFF().
+
+However the great news is that once the field order is set correctly, BSVideoSource appears to be capable of correctly processing repeat field flags! Whereas the official FFMS2 build does not, so great work there and I am very pleased with this :thanks:
+
+With the same test file as above, with BSVideoSource(rff=true) and info() in Avisynth, I observe the Avisynth field order (clip.GetParity) is changing on a per-frame basis (starting around the 16 second mark) whereas all other source filters keep a static field order for all frames. I don't believe the field order should actually be set dynamically on a per-frame basis like that as it will only confuse downstream filters (even Bob obeys it and will produce more line-bobbing artefacts than normal).
+
+I don't think interlaced video is supposed to have field order changes, although I'm not sure if that's by design or merely convention. I've certainly seen files where the field order changed but that seemed due to trimming the file and corrupting some of the data. I've never actually seen a "clean" MPEG2 or AVC that contained a deliberate field order change mid-stream, but I could be wrong - maybe someone more knowledgeable could comment. In any case I think it would be safer to follow the behaviour used by LWLibav, FFMS2, Mpeg2Source and DGSource.
+
+flossy_cake	22nd April 2024 09:20
+Just to notify I have added 4 to the above list
+
+Myrsloik	22nd April 2024 09:26
+Quote:
+Originally Posted by flossy_cake (Post 2000802)
+...
+Some issues...
+"BSVideoSource does not have a named argument variableformat"
+
+The cachepath argument forces this new behaviour of subdirectories based on the source folder structure. As I require full control over where my index files go and their names, please could we have an option to specify file path like FFMS2 and LWlibav, eg. cachepath="C:\MyVideos\MyCacheFiles\S01E01 Hello World.bsindex". Currently I can only specify a parent folder and then BS creates its own folder substructure inside that parent folder.
+
+With this test file (MPEG2 video remuxed from DVD, contains repeat field flags that must be obeyed so please set rff=true when testing) ...for some reason BS sets the frames to FieldBased (by this I mean clip.IsFieldBased==true as reported on info(), not to be confused with the frame property called "_FieldBased").
+
+This means filters like for example Bob() won't do anything at all cause Bob() only operates on framebased clips (where framebased means each frame is not an individual field, according to Avisynth's definition here).
+
+I thought this would be an easy workaround by just calling AssumeFrameBased() in Avisynth but that function also forces the field order to bottom field first (by this I mean clip.GetParity==false as reported on info()).
+
+So the workaround becomes a bit convoluted: (1) get the original correct field order using clip.GetParity(), (2) call AssumeFrameBased(), (3) restore the field order from step 1 using AssumeTFF/BFF().
+
+However the great news is that once the field order is set correctly, BSVideoSource appears to be capable of correctly processing repeat field flags! Whereas the official FFMS2 build does not, so great work there and I am very pleased with this :thanks:
+
+With the same test file as above, with BSVideoSource(rff=true) and info() in Avisynth, I observe the Avisynth field order (clip.GetParity) is changing on a per-frame basis (starting around the 16 second mark) whereas all other source filters keep a static field order for all frames. I don't believe the field order should actually be set dynamically on a per-frame basis like that as it will only confuse downstream filters (even Bob obeys it and will produce more line-bobbing artefacts than normal).
+
+I don't think interlaced video is supposed to have field order changes, although I'm not sure if that's by design or merely convention. I've certainly seen files where the field order changed but that seemed due to trimming the file and corrupting some of the data. I've never actually seen a "clean" MPEG2 or AVC that contained a deliberate field order change mid-stream, but I could be wrong - maybe someone more knowledgeable could comment. In any case I think it would be safer to follow the behaviour used by LWLibav, FFMS2, Mpeg2Source and DGSource.
+1. Documentation error. Avisynth doesn't support changing frame dimensions and format in a clip.
+2. It's the way it is. I'd rather not implement a gazillion path modes. If an angry mob boycotts the filter maybe I'll add some option.
+3&4. I have no idea what the exact conventions are but you do get an interesting problem for clips with RFF since effectively the field order does change. What are the rules? Having things like this set per clip and not per frame is to me an absurdity.
+
+flossy_cake	22nd April 2024 09:44
+Quote:
+Originally Posted by Myrsloik (Post 2000804)
+3&4. I have no idea what the exact conventions are but you do get an interesting problem for clips with RFF since effectively the field order does change. What are the rules? Having things like this set per clip and not per frame is to me an absurdity.
+The thing is that none of the other source filters (LWLibav, FFMS2, Mpeg2Source, DGSource) result in changing field order per frame like that, so I know it's wrong.
+
+You can read about how it's supposed to work here
+
+In laymans terms: originally 24p film was stored on DVDs as 30i with 3:2 field cadence, then they realised it's a waste of bandwidth so instead just store 24p and put a bunch of "repeat me" flags for the DVD player to read and construct the 3:2 cadence at runtime. "Great, so I'll just ignore the flags and get the 24p which is what I wanted all along". Unfortunately it doesn't work like that - the flags need to be obeyed otherwise there are sync issues (this is what DG's special "forced film" mode tries to correct, but doesn't get it quite right in my experience).
+
+BSVideoSource appears to obey the flags correctly which is great, so it correctly reconstructs the 30i from the 24p, but for some reason it's setting Avisynth internal parity (field order) of the resulting 30i frames to some dynamically changing value which I'm sure it shouldn't be doing since none of the other source filters do it, and it confuses downstream filters like Bob or any IVTC filters which is going to mess with its decision making regarding which field to weave with.
+
+flossy_cake	22nd April 2024 10:09
+If inside BSVideoSource you have access to what LWLibav or FFMpeg thinks the field order is, just set it to that, because those filters are trustworthy.
+
+As for the "fieldbased" issue, I would just never set fieldbased to true inside BSVideoSource, because since when do you encounter a video file where each frame is a field? Never happens, never seen it. Fieldbased is a clip property that results from Avisynth processing, it's not a property of the source file. Fieldbased is an Avisynth concept, has nothing to do with the source file. Therefore the source filter should never set it to true.
+
+tebasuna51	24th April 2024 10:15
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+
+Myrsloik	24th April 2024 10:25
+Quote:
+Originally Posted by tebasuna51 (Post 2000870)
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+I'll take another look at it then. FFmpeg likes to call it 32 bit and then if you're lucky the actually used number of bits is revealed.
+
+Myrsloik	24th April 2024 10:31
+Quote:
+Originally Posted by tebasuna51 (Post 2000870)
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+Speaking of that, there's no simple way to signal how many bits are actually used for audio in Avisynth? I mean you have some 20 bit formats as well.
+
+Myrsloik	25th April 2024 10:03
+R4 is out to please the avs+ users.
+
+tebasuna51	27th April 2024 10:10
+Thanks, R4 output correctly 24 bit int lossless sources
+
+18fps	27th April 2024 11:16
+Thank you! At last I can feed dpx into avisynth while keeping the full 10 bit!
+
+Zarxrax	11th May 2024 20:16
+Using R4 in Avisynth+, I can not get audio to load. It will crash whatever application I am opening the script in. I have tried both BSSource and BSAudioSource with 5+ different files including different audio codecs.
+
+Myrsloik	11th May 2024 20:52
+Quote:
+Originally Posted by Zarxrax (Post 2001760)
+Using R4 in Avisynth+, I can not get audio to load. It will crash whatever application I am opening the script in. I have tried both BSSource and BSAudioSource with 5+ different files including different audio codecs.
+Avs+ version?
+
+Zarxrax	11th May 2024 21:09
+Quote:
+Originally Posted by Myrsloik (Post 2001762)
+Avs+ version?
+As I mentioned, I am using it in avisynth+. I'm a little confused by your question, as it appears there is a single version of the plugin that works in both vapoursynth and avs+, right?
+
+tebasuna51	11th May 2024 21:39
+Without problems here Avs+ 3.7.3 (r4066, master, x86_64)
+
+Include in your script:
+
+Version()
+
+Zarxrax	11th May 2024 22:04
+Hmmm, okay I seem to have resolved the issue.
+I had Avs+ 3.7.3 r3849. I have updated to 3.7.3 r4003, and BSSource is loading audio now.
+I had previously only looked at the "3.7.3" part, so I thought I was up to date.
+
+isidroco	5th October 2024 23:29
+Thanks for BestSource2, using (55MB) sample "20090227_letterman-x264_m2ts_1080i.mp4" taken from:
+https://forum.videohelp.com/threads/...le#post2608363
+ffms2 gives slighlty wrong num/den FPS (500000/16697)
+LSmashVideoSource thinks it's PAL 25fps and duplicate all frames
+LWLibavVideoSource gives 2x FPS 60000/1001
+DirectshowSource gives slightly wrong 10000000/333667 FPS
+
+BSSource is the only one which gives correct FPS 30000/1001
+
+Myrsloik	6th October 2024 08:52
+Quote:
+Originally Posted by isidroco (Post 2007758)
+Thanks for BestSource2, using (55MB) sample "20090227_letterman-x264_m2ts_1080i.mp4" taken from:
+https://forum.videohelp.com/threads/...le#post2608363
+ffms2 gives slighlty wrong num/den FPS (500000/16697)
+LSmashVideoSource thinks it's PAL 25fps and duplicate all frames
+LWLibavVideoSource gives 2x FPS 60000/1001
+DirectshowSource gives slightly wrong 10000000/333667 FPS
+
+BSSource is the only one which gives correct FPS 30000/1001
+Nice. Note that many files that appear to be CFR aren't. Especially MP4 ones. They start with a few frames of irregular length quite often.
+
+So even if you get the framerate you expect you could still end up with an audio offset of a few ms.
+
+Everything is shit.
+
+VoodooFX	21st October 2024 14:06
+What's up with this very slow indexing? I guess it tries to decode whole video file.
+With LSMASHSource half of encode would be finished when BestSource2 would be still indexing...
+
+Myrsloik	21st October 2024 14:47
+Quote:
+Originally Posted by VoodooFX (Post 2008645)
+What's up with this very slow indexing? I guess it tries to decode whole video file.
+With LSMASHSource half of encode would be finished when BestSource2 would be still indexing...
+The whole file is decoded. Every frame has its checksum calculated. Makes things more reliable than all other source filters.
+
+VoodooFX	21st October 2024 20:32
+Could be there option implemented for faster indexing like LWLibavVideoSource()?
+I like that dxva2/d3d11va decoding works here, could speed-up encoding a bit.
+
+Myrsloik	21st October 2024 20:50
+Quote:
+Originally Posted by VoodooFX (Post 2008670)
+Could be there option implemented for faster indexing like LWLibavVideoSource()?
+I like that dxva2/d3d11va decoding works here, could speed-up encoding a bit.
+"Could it be exactly like LWLibavVideoSource()?"
+
+Sure, just download LWLibavVideoSource.
+
+VoodooFX	21st October 2024 20:58
+I meant the faster indexing.
+
+Myrsloik	21st October 2024 23:20
+Quote:
+Originally Posted by VoodooFX (Post 2008674)
+I meant the faster indexing.
+Me too
+
+Emulgator	24th October 2024 18:14
+Many thanks Myrsloik !
+Here your BestSource R8 just served correct framerate 6.004fps from a crappy xvid in .avi webcam source.
+The other sourcefilters assumed 25.000fps and borked the stream.
+
+Myrsloik	25th October 2024 08:48
+Quote:
+Originally Posted by Emulgator (Post 2008837)
+Many thanks Myrsloik !
+Here your BestSource R8 just served correct framerate 6.004fps from a crappy xvid in .avi webcam source.
+The other sourcefilters assumed 25.000fps and borked the stream.
+Interesting. Now I'm waiting for someone to report a case where the framerate guessing really fails. Posting a mega VFR file doesn't count.
+
+Jamaika	26th October 2024 07:57
+I don't know how to use it. :D
+Test GCC: (GNU) 15.0.0 20241020 (experimental) (SIMD) AVX
+I don't know if gcc 15.0.0 works correctly in C++23. Wrapper uses std::format and std:: print or fmt::format replacement.
+https://github.com/vapoursynth/bests...6dcff124a6729f
+
+BSAudioSource("myAvi.avi", -1, -1, 0, false, false, 0, 1, "", 100)
+Code:
+[mp3 @ 0000022278cac380] The dropchanged flag is deprecated.
+[mpeg4 @ 0000022278cca160] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+[mp3 @ 0000022278cf0fe0] The dropchanged flag is deprecated.
+Input #0, avisynth, from 'AudioBoost.avs':
+  Duration: 01:38:45.19, start: 0.000000, bitrate: N/A
+  Stream #0:0: Audio: pcm_s16le, 48000 Hz, stereo, s16, 1536 kb/s
+  6.83 M-A:  0.000 fd=  0 aq=  192KB vq=    0KB sq=    0B
+BSVideoSource("myAvi.avi", -1, -1, 1, false, 0, 20, false, false, 1, "", 1000, "", 9, "time.txt", 0)
+Code:
+[mpeg4 @ 000002184d9377b0] The dropchanged flag is deprecated.
+[mpeg4 @ 000002184d97eb80] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+[mpeg4 @ 000002184d97b5d0] The dropchanged flag is deprecated.
+[mpeg4 @ 000002184d97bcb0] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+    nan    :  0.000 fd=  0 aq=    0KB vq=    0KB sq=    0B
+Error: Wrapper doesn't support XVID codec
+
+BSSource("myAvi.avi", -1, -1, false, -1, 1, false, 0, 20, false, false, 1, "", 100, 1000, "", 9, "time.txt", 1, -1, 0)
+Code:
+[avisynth @ 0000012382d187a0] Script error: Invalid arguments to function 'BSSource'.
+(AudioBoost.avs, line 8)
+AudioBoost.avs: Unknown error occurred
+I don't know how to use it.
+BSSetDebugOutput(false)
+Code:
+[avisynth @ 000001869e344350] AviSynth script did not return a clip
+AudioBoost.avs: Unknown error occurred
+BSSetFFmpegLogLevel(1)
+I don't know how to use it.
+
+Edit: Probably too modern a solution for ffmpeg in gcc 15.0.0.
+When I have time I will test C++17 with std::to_string.
+https://www.sendspace.com/file/rxka3g
+
+wonkey_monkey	20th February 2025 23:15
+Quote:
+Originally Posted by Myrsloik (Post 2008852)
+Interesting. Now I'm waiting for someone to report a case where the framerate guessing really fails. Posting a mega VFR file doesn't count.
+I tried a 1080i50 (p25 really) blu-ray rip (MakeMKV rip remuxed to .mp4) and it came back as 25.764fps, if that's of any use?
+
+Not sure what it would be guessing about though.
+
+Edit: just tried the same tracks remuxed back to an MKV. The framerate is correct, but once opened, it was like it was seeking linearly all the way through to whatever frame I was trying to jump to on the timeline. Jumping forward 50 frames takes less than a second. Jumping forward 1000 frames takes ~17 seconds. Jumping forward 5000 frames takes ~90 seconds. No such issue with MP4 container.
+
+Myrsloik	21st February 2025 09:49
+Quote:
+Originally Posted by wonkey_monkey (Post 2015180)
+I tried a 1080i50 (p25 really) blu-ray rip (MakeMKV rip remuxed to .mp4) and it came back as 25.764fps, if that's of any use?
+
+Not sure what it would be guessing about though.
+
+Edit: just tried the same tracks remuxed back to an MKV. The framerate is correct, but once opened, it was like it was seeking linearly all the way through to whatever frame I was trying to jump to on the timeline. Jumping forward 50 frames takes less than a second. Jumping forward 1000 frames takes ~17 seconds. Jumping forward 5000 frames takes ~90 seconds. No such issue with MP4 container.
+Sometimes you expose FFmpeg bugs when remuxing things. I think this may be one of those cases.
+
+No idea why the framerate is that much off in mp4. I need the file to figure that one out.
+
+wonkey_monkey	21st February 2025 10:27
+Quote:
+Originally Posted by Myrsloik (Post 2015190)
+No idea why the framerate is that much off in mp4. I need the file to figure that one out.
+Well that one's 14Gb :cool: I'll see if there's a smaller one with the same issue.
+
+Indexing my 89 blu-ray rips is going quicker than expected and should be finished by the end of today :D Apart from that one-off niggle (necessity?), BestSource is living up to its name so far! :thanks:
+
+Can you provide any hints as to the format of the index file? I have a need to extract a list of IDR frames.
+
+Myrsloik	21st February 2025 13:56
+Quote:
+Originally Posted by wonkey_monkey (Post 2015191)
+Well that one's 14Gb :cool: I'll see if there's a smaller one with the same issue.
+
+Indexing my 89 blu-ray rips is going quicker than expected and should be finished by the end of today :D Apart from that one-off niggle, BestSource is living up to its name so far! :thanks:
+
+Can you provide any hints as to the format of the index file? I have a need to extract a list of IDR frames.
+You'll have to look at the source code. It uses a very simple dictionary compression method to only require 1 byte/frame most of the time. The fallback to uncompressed is in practice never actually used.
+
+wonkey_monkey	21st February 2025 19:27
+Quote:
+Originally Posted by Myrsloik (Post 2015197)
+You'll have to look at the source code. It uses a very simple dictionary compression method to only require 1 byte/frame most of the time. The fallback to uncompressed is in practice never actually used.
+Nice and simple! :thanks:
+
+------------------------------------
+
+Here's a 1-second cut from one of the files reporting a wrong framerate with BSSource (other rips report correctly so I'm not sure what the difference might be). Others from the same boxset also report incorrect rates:
+
+https://horman.net/cut.mp4
+
+Exactly what framerate is reported seems to vary - sometimes more than 25fps, sometimes less - depending both on the source file and which part of it I cut out with ffmpeg (you can see the wrong framerate in the screenshots below). But it's always the same framerate for the same file.
+
+The same tracks in an MKV container report the correct framerate (25fps).
+
+------------------------------------
+
+Here's an example of audio being corrupt/silent on first load (immediately after indexing): https://i.imgur.com/ar25c5Z.png
+
+This is demonstrated using the same file as linked above. If you step forward and then back, VirtualDub redraws the corrupted frame's audio as silent.
+
+Here's the correct audio, which is always shown on subsequent loads (no indexing required since it's already done): https://i.imgur.com/8Pgp8Uo.png
+
+This happens with both MKV and MP4 containers.
+
+------------------------------------
+
+Also to report BSSource has fixed all of the audio sync issues I thought I was having with FFMpegSource and have already "corrected". So I need to undo all of that :D:eek::D
+
+Myrsloik	23rd February 2025 16:15
+Your FPS sample is weird. I've implemented a fix but it's possible the individual frame timestamps weren't properly reordered to match the b-frame reordering or something => Your file is subtly broken but most things go by container framerate and get it mostly right anyway.
+
+Will investigate the audio issue next.
+
+
+Doom9's Forum (https://forum.doom9.org/index.php)
+-   VapourSynth (https://forum.doom9.org/forumdisplay.php?f=82)
+-   -   BestSource2 - The Bestest Source with Fast Seeking (https://forum.doom9.org/showthread.php?t=185408)
+
+Myrsloik	22nd March 2024 18:28
+BestSource2 - The Bestest Source with Fast Seeking
+ 
+Some of you tried and used the original BestSource. Some of you complained that it was slow or was missing RFF and CFR modes. All of this has been fixed. With hardware decoding support intact.
+
+Run your seek tests. Do your worst. This should surpass all previously released source filters with only slightly slower indexing and marginally higher ram usage.
+
+
+BestSource releases
+
+Myrsloik	8th April 2024 20:24
+R2 RC2 released. Keep testing.
+
+amayra	10th April 2024 19:38
+thanks for i find any issues do i report it here or in github ?
+
+Myrsloik	10th April 2024 19:49
+Github is preferred. If it's a specific avisynth issue wait for rc3 since lots of bugs were found there
+
+rgr	11th April 2024 11:07
+So I'll wait for RC3 with my VFR file ;)
+
+Myrsloik	17th April 2024 09:32
+And we have a proper R2 release!
+
+tormento	17th April 2024 12:22
+First release with fast seeking. Works completely differently from R1 and is now mostly a drop-in replacement for FFMS2.
+
+That's a bold statement :)
+
+flossy_cake	22nd April 2024 08:45
+Thanks for this source filter, I'm always interested in having more source filters available in case a file doesn't play nice with another filter so it's much appreciated.
+
+These are the source filters I've been using so far and I feel reasonably familiar with their performance and compatibility with the files I play for realtime screening with MPC-HC (mostly MPEG2 DVD remux files (mkv and vob), x264 and x265 with the usual audio formats like AC3, DTS, AAC, MP3, FLAC).
+LWLibavVideoSource, LWLibavAudioSource (my "go to" option)
+FFVideoSource, FFAudioSource (StvG's fork as it fixes an issue with rffmode in the official build)
+Mpeg2Source (DG's MPEG2 filter, only compatible with .vob MPEG2's but does them very competently)
+DGSource (DG's Nvidia GPU decoding filter, compatible with more codecs and containers eg. MPEG2 remuxed to mkv)
+
+And now I add to that list BSVideoSource and BSAudioSource - we shall see whether it can outdo StvG's FFMS2 fork and possibly LWLibav!
+
+Some issues...
+"BSVideoSource does not have a named argument variableformat"
+
+The cachepath argument forces this new behaviour of subdirectories based on the source folder structure. As I require full control over where my index files go and their names, please could we have an option to specify file path like FFMS2 and LWlibav, eg. cachepath="C:\MyVideos\MyCacheFiles\S01E01 Hello World.bsindex". Currently I can only specify a parent folder and then BS creates its own folder substructure inside that parent folder.
+
+With this test file (MPEG2 video remuxed from DVD, contains repeat field flags that must be obeyed so please set rff=true when testing) ...for some reason BS sets the frames to FieldBased (by this I mean clip.IsFieldBased==true as reported on info(), not to be confused with the frame property called "_FieldBased").
+
+This means filters like for example Bob() won't do anything at all cause Bob() only operates on framebased clips (where framebased means each frame is not an individual field, according to Avisynth's definition here).
+
+I thought this would be an easy workaround by just calling AssumeFrameBased() in Avisynth but that function also forces the field order to bottom field first (by this I mean clip.GetParity==false as reported on info()).
+
+So the workaround becomes a bit convoluted: (1) get the original correct field order using clip.GetParity(), (2) call AssumeFrameBased(), (3) restore the field order from step 1 using AssumeTFF/BFF().
+
+However the great news is that once the field order is set correctly, BSVideoSource appears to be capable of correctly processing repeat field flags! Whereas the official FFMS2 build does not, so great work there and I am very pleased with this :thanks:
+
+With the same test file as above, with BSVideoSource(rff=true) and info() in Avisynth, I observe the Avisynth field order (clip.GetParity) is changing on a per-frame basis (starting around the 16 second mark) whereas all other source filters keep a static field order for all frames. I don't believe the field order should actually be set dynamically on a per-frame basis like that as it will only confuse downstream filters (even Bob obeys it and will produce more line-bobbing artefacts than normal).
+
+I don't think interlaced video is supposed to have field order changes, although I'm not sure if that's by design or merely convention. I've certainly seen files where the field order changed but that seemed due to trimming the file and corrupting some of the data. I've never actually seen a "clean" MPEG2 or AVC that contained a deliberate field order change mid-stream, but I could be wrong - maybe someone more knowledgeable could comment. In any case I think it would be safer to follow the behaviour used by LWLibav, FFMS2, Mpeg2Source and DGSource.
+
+flossy_cake	22nd April 2024 09:20
+Just to notify I have added 4 to the above list
+
+Myrsloik	22nd April 2024 09:26
+Quote:
+Originally Posted by flossy_cake (Post 2000802)
+...
+Some issues...
+"BSVideoSource does not have a named argument variableformat"
+
+The cachepath argument forces this new behaviour of subdirectories based on the source folder structure. As I require full control over where my index files go and their names, please could we have an option to specify file path like FFMS2 and LWlibav, eg. cachepath="C:\MyVideos\MyCacheFiles\S01E01 Hello World.bsindex". Currently I can only specify a parent folder and then BS creates its own folder substructure inside that parent folder.
+
+With this test file (MPEG2 video remuxed from DVD, contains repeat field flags that must be obeyed so please set rff=true when testing) ...for some reason BS sets the frames to FieldBased (by this I mean clip.IsFieldBased==true as reported on info(), not to be confused with the frame property called "_FieldBased").
+
+This means filters like for example Bob() won't do anything at all cause Bob() only operates on framebased clips (where framebased means each frame is not an individual field, according to Avisynth's definition here).
+
+I thought this would be an easy workaround by just calling AssumeFrameBased() in Avisynth but that function also forces the field order to bottom field first (by this I mean clip.GetParity==false as reported on info()).
+
+So the workaround becomes a bit convoluted: (1) get the original correct field order using clip.GetParity(), (2) call AssumeFrameBased(), (3) restore the field order from step 1 using AssumeTFF/BFF().
+
+However the great news is that once the field order is set correctly, BSVideoSource appears to be capable of correctly processing repeat field flags! Whereas the official FFMS2 build does not, so great work there and I am very pleased with this :thanks:
+
+With the same test file as above, with BSVideoSource(rff=true) and info() in Avisynth, I observe the Avisynth field order (clip.GetParity) is changing on a per-frame basis (starting around the 16 second mark) whereas all other source filters keep a static field order for all frames. I don't believe the field order should actually be set dynamically on a per-frame basis like that as it will only confuse downstream filters (even Bob obeys it and will produce more line-bobbing artefacts than normal).
+
+I don't think interlaced video is supposed to have field order changes, although I'm not sure if that's by design or merely convention. I've certainly seen files where the field order changed but that seemed due to trimming the file and corrupting some of the data. I've never actually seen a "clean" MPEG2 or AVC that contained a deliberate field order change mid-stream, but I could be wrong - maybe someone more knowledgeable could comment. In any case I think it would be safer to follow the behaviour used by LWLibav, FFMS2, Mpeg2Source and DGSource.
+1. Documentation error. Avisynth doesn't support changing frame dimensions and format in a clip.
+2. It's the way it is. I'd rather not implement a gazillion path modes. If an angry mob boycotts the filter maybe I'll add some option.
+3&4. I have no idea what the exact conventions are but you do get an interesting problem for clips with RFF since effectively the field order does change. What are the rules? Having things like this set per clip and not per frame is to me an absurdity.
+
+flossy_cake	22nd April 2024 09:44
+Quote:
+Originally Posted by Myrsloik (Post 2000804)
+3&4. I have no idea what the exact conventions are but you do get an interesting problem for clips with RFF since effectively the field order does change. What are the rules? Having things like this set per clip and not per frame is to me an absurdity.
+The thing is that none of the other source filters (LWLibav, FFMS2, Mpeg2Source, DGSource) result in changing field order per frame like that, so I know it's wrong.
+
+You can read about how it's supposed to work here
+
+In laymans terms: originally 24p film was stored on DVDs as 30i with 3:2 field cadence, then they realised it's a waste of bandwidth so instead just store 24p and put a bunch of "repeat me" flags for the DVD player to read and construct the 3:2 cadence at runtime. "Great, so I'll just ignore the flags and get the 24p which is what I wanted all along". Unfortunately it doesn't work like that - the flags need to be obeyed otherwise there are sync issues (this is what DG's special "forced film" mode tries to correct, but doesn't get it quite right in my experience).
+
+BSVideoSource appears to obey the flags correctly which is great, so it correctly reconstructs the 30i from the 24p, but for some reason it's setting Avisynth internal parity (field order) of the resulting 30i frames to some dynamically changing value which I'm sure it shouldn't be doing since none of the other source filters do it, and it confuses downstream filters like Bob or any IVTC filters which is going to mess with its decision making regarding which field to weave with.
+
+flossy_cake	22nd April 2024 10:09
+If inside BSVideoSource you have access to what LWLibav or FFMpeg thinks the field order is, just set it to that, because those filters are trustworthy.
+
+As for the "fieldbased" issue, I would just never set fieldbased to true inside BSVideoSource, because since when do you encounter a video file where each frame is a field? Never happens, never seen it. Fieldbased is a clip property that results from Avisynth processing, it's not a property of the source file. Fieldbased is an Avisynth concept, has nothing to do with the source file. Therefore the source filter should never set it to true.
+
+tebasuna51	24th April 2024 10:15
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+
+Myrsloik	24th April 2024 10:25
+Quote:
+Originally Posted by tebasuna51 (Post 2000870)
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+I'll take another look at it then. FFmpeg likes to call it 32 bit and then if you're lucky the actually used number of bits is revealed.
+
+Myrsloik	24th April 2024 10:31
+Quote:
+Originally Posted by tebasuna51 (Post 2000870)
+R3 test
+
+Like FFAudioSource BSAudioSource output 32 bit int with lossless sources 24 bit
+Speaking of that, there's no simple way to signal how many bits are actually used for audio in Avisynth? I mean you have some 20 bit formats as well.
+
+Myrsloik	25th April 2024 10:03
+R4 is out to please the avs+ users.
+
+tebasuna51	27th April 2024 10:10
+Thanks, R4 output correctly 24 bit int lossless sources
+
+18fps	27th April 2024 11:16
+Thank you! At last I can feed dpx into avisynth while keeping the full 10 bit!
+
+Zarxrax	11th May 2024 20:16
+Using R4 in Avisynth+, I can not get audio to load. It will crash whatever application I am opening the script in. I have tried both BSSource and BSAudioSource with 5+ different files including different audio codecs.
+
+Myrsloik	11th May 2024 20:52
+Quote:
+Originally Posted by Zarxrax (Post 2001760)
+Using R4 in Avisynth+, I can not get audio to load. It will crash whatever application I am opening the script in. I have tried both BSSource and BSAudioSource with 5+ different files including different audio codecs.
+Avs+ version?
+
+Zarxrax	11th May 2024 21:09
+Quote:
+Originally Posted by Myrsloik (Post 2001762)
+Avs+ version?
+As I mentioned, I am using it in avisynth+. I'm a little confused by your question, as it appears there is a single version of the plugin that works in both vapoursynth and avs+, right?
+
+tebasuna51	11th May 2024 21:39
+Without problems here Avs+ 3.7.3 (r4066, master, x86_64)
+
+Include in your script:
+
+Version()
+
+Zarxrax	11th May 2024 22:04
+Hmmm, okay I seem to have resolved the issue.
+I had Avs+ 3.7.3 r3849. I have updated to 3.7.3 r4003, and BSSource is loading audio now.
+I had previously only looked at the "3.7.3" part, so I thought I was up to date.
+
+isidroco	5th October 2024 23:29
+Thanks for BestSource2, using (55MB) sample "20090227_letterman-x264_m2ts_1080i.mp4" taken from:
+https://forum.videohelp.com/threads/...le#post2608363
+ffms2 gives slighlty wrong num/den FPS (500000/16697)
+LSmashVideoSource thinks it's PAL 25fps and duplicate all frames
+LWLibavVideoSource gives 2x FPS 60000/1001
+DirectshowSource gives slightly wrong 10000000/333667 FPS
+
+BSSource is the only one which gives correct FPS 30000/1001
+
+Myrsloik	6th October 2024 08:52
+Quote:
+Originally Posted by isidroco (Post 2007758)
+Thanks for BestSource2, using (55MB) sample "20090227_letterman-x264_m2ts_1080i.mp4" taken from:
+https://forum.videohelp.com/threads/...le#post2608363
+ffms2 gives slighlty wrong num/den FPS (500000/16697)
+LSmashVideoSource thinks it's PAL 25fps and duplicate all frames
+LWLibavVideoSource gives 2x FPS 60000/1001
+DirectshowSource gives slightly wrong 10000000/333667 FPS
+
+BSSource is the only one which gives correct FPS 30000/1001
+Nice. Note that many files that appear to be CFR aren't. Especially MP4 ones. They start with a few frames of irregular length quite often.
+
+So even if you get the framerate you expect you could still end up with an audio offset of a few ms.
+
+Everything is shit.
+
+VoodooFX	21st October 2024 14:06
+What's up with this very slow indexing? I guess it tries to decode whole video file.
+With LSMASHSource half of encode would be finished when BestSource2 would be still indexing...
+
+Myrsloik	21st October 2024 14:47
+Quote:
+Originally Posted by VoodooFX (Post 2008645)
+What's up with this very slow indexing? I guess it tries to decode whole video file.
+With LSMASHSource half of encode would be finished when BestSource2 would be still indexing...
+The whole file is decoded. Every frame has its checksum calculated. Makes things more reliable than all other source filters.
+
+VoodooFX	21st October 2024 20:32
+Could be there option implemented for faster indexing like LWLibavVideoSource()?
+I like that dxva2/d3d11va decoding works here, could speed-up encoding a bit.
+
+Myrsloik	21st October 2024 20:50
+Quote:
+Originally Posted by VoodooFX (Post 2008670)
+Could be there option implemented for faster indexing like LWLibavVideoSource()?
+I like that dxva2/d3d11va decoding works here, could speed-up encoding a bit.
+"Could it be exactly like LWLibavVideoSource()?"
+
+Sure, just download LWLibavVideoSource.
+
+VoodooFX	21st October 2024 20:58
+I meant the faster indexing.
+
+Myrsloik	21st October 2024 23:20
+Quote:
+Originally Posted by VoodooFX (Post 2008674)
+I meant the faster indexing.
+Me too
+
+Emulgator	24th October 2024 18:14
+Many thanks Myrsloik !
+Here your BestSource R8 just served correct framerate 6.004fps from a crappy xvid in .avi webcam source.
+The other sourcefilters assumed 25.000fps and borked the stream.
+
+Myrsloik	25th October 2024 08:48
+Quote:
+Originally Posted by Emulgator (Post 2008837)
+Many thanks Myrsloik !
+Here your BestSource R8 just served correct framerate 6.004fps from a crappy xvid in .avi webcam source.
+The other sourcefilters assumed 25.000fps and borked the stream.
+Interesting. Now I'm waiting for someone to report a case where the framerate guessing really fails. Posting a mega VFR file doesn't count.
+
+Jamaika	26th October 2024 07:57
+I don't know how to use it. :D
+Test GCC: (GNU) 15.0.0 20241020 (experimental) (SIMD) AVX
+I don't know if gcc 15.0.0 works correctly in C++23. Wrapper uses std::format and std:: print or fmt::format replacement.
+https://github.com/vapoursynth/bests...6dcff124a6729f
+
+BSAudioSource("myAvi.avi", -1, -1, 0, false, false, 0, 1, "", 100)
+Code:
+[mp3 @ 0000022278cac380] The dropchanged flag is deprecated.
+[mpeg4 @ 0000022278cca160] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+[mp3 @ 0000022278cf0fe0] The dropchanged flag is deprecated.
+Input #0, avisynth, from 'AudioBoost.avs':
+  Duration: 01:38:45.19, start: 0.000000, bitrate: N/A
+  Stream #0:0: Audio: pcm_s16le, 48000 Hz, stereo, s16, 1536 kb/s
+  6.83 M-A:  0.000 fd=  0 aq=  192KB vq=    0KB sq=    0B
+BSVideoSource("myAvi.avi", -1, -1, 1, false, 0, 20, false, false, 1, "", 1000, "", 9, "time.txt", 0)
+Code:
+[mpeg4 @ 000002184d9377b0] The dropchanged flag is deprecated.
+[mpeg4 @ 000002184d97eb80] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+[mpeg4 @ 000002184d97b5d0] The dropchanged flag is deprecated.
+[mpeg4 @ 000002184d97bcb0] Video uses a non-standard and wasteful way to store B-frames ('packed B-frames'). Consider using the mpeg4_unpack_bframes bitstream filter without encoding but stream copy to fix it.
+    nan    :  0.000 fd=  0 aq=    0KB vq=    0KB sq=    0B
+Error: Wrapper doesn't support XVID codec
+
+BSSource("myAvi.avi", -1, -1, false, -1, 1, false, 0, 20, false, false, 1, "", 100, 1000, "", 9, "time.txt", 1, -1, 0)
+Code:
+[avisynth @ 0000012382d187a0] Script error: Invalid arguments to function 'BSSource'.
+(AudioBoost.avs, line 8)
+AudioBoost.avs: Unknown error occurred
+I don't know how to use it.
+BSSetDebugOutput(false)
+Code:
+[avisynth @ 000001869e344350] AviSynth script did not return a clip
+AudioBoost.avs: Unknown error occurred
+BSSetFFmpegLogLevel(1)
+I don't know how to use it.
+
+Edit: Probably too modern a solution for ffmpeg in gcc 15.0.0.
+When I have time I will test C++17 with std::to_string.
+https://www.sendspace.com/file/rxka3g
+
+wonkey_monkey	20th February 2025 23:15
+Quote:
+Originally Posted by Myrsloik (Post 2008852)
+Interesting. Now I'm waiting for someone to report a case where the framerate guessing really fails. Posting a mega VFR file doesn't count.
+I tried a 1080i50 (p25 really) blu-ray rip (MakeMKV rip remuxed to .mp4) and it came back as 25.764fps, if that's of any use?
+
+Not sure what it would be guessing about though.
+
+Edit: just tried the same tracks remuxed back to an MKV. The framerate is correct, but once opened, it was like it was seeking linearly all the way through to whatever frame I was trying to jump to on the timeline. Jumping forward 50 frames takes less than a second. Jumping forward 1000 frames takes ~17 seconds. Jumping forward 5000 frames takes ~90 seconds. No such issue with MP4 container.
+
+Myrsloik	21st February 2025 09:49
+Quote:
+Originally Posted by wonkey_monkey (Post 2015180)
+I tried a 1080i50 (p25 really) blu-ray rip (MakeMKV rip remuxed to .mp4) and it came back as 25.764fps, if that's of any use?
+
+Not sure what it would be guessing about though.
+
+Edit: just tried the same tracks remuxed back to an MKV. The framerate is correct, but once opened, it was like it was seeking linearly all the way through to whatever frame I was trying to jump to on the timeline. Jumping forward 50 frames takes less than a second. Jumping forward 1000 frames takes ~17 seconds. Jumping forward 5000 frames takes ~90 seconds. No such issue with MP4 container.
+Sometimes you expose FFmpeg bugs when remuxing things. I think this may be one of those cases.
+
+No idea why the framerate is that much off in mp4. I need the file to figure that one out.
+
+wonkey_monkey	21st February 2025 10:27
+Quote:
+Originally Posted by Myrsloik (Post 2015190)
+No idea why the framerate is that much off in mp4. I need the file to figure that one out.
+Well that one's 14Gb :cool: I'll see if there's a smaller one with the same issue.
+
+Indexing my 89 blu-ray rips is going quicker than expected and should be finished by the end of today :D Apart from that one-off niggle (necessity?), BestSource is living up to its name so far! :thanks:
+
+Can you provide any hints as to the format of the index file? I have a need to extract a list of IDR frames.
+
+Myrsloik	21st February 2025 13:56
+Quote:
+Originally Posted by wonkey_monkey (Post 2015191)
+Well that one's 14Gb :cool: I'll see if there's a smaller one with the same issue.
+
+Indexing my 89 blu-ray rips is going quicker than expected and should be finished by the end of today :D Apart from that one-off niggle, BestSource is living up to its name so far! :thanks:
+
+Can you provide any hints as to the format of the index file? I have a need to extract a list of IDR frames.
+You'll have to look at the source code. It uses a very simple dictionary compression method to only require 1 byte/frame most of the time. The fallback to uncompressed is in practice never actually used.
+
+wonkey_monkey	21st February 2025 19:27
+Quote:
+Originally Posted by Myrsloik (Post 2015197)
+You'll have to look at the source code. It uses a very simple dictionary compression method to only require 1 byte/frame most of the time. The fallback to uncompressed is in practice never actually used.
+Nice and simple! :thanks:
+
+------------------------------------
+
+Here's a 1-second cut from one of the files reporting a wrong framerate with BSSource (other rips report correctly so I'm not sure what the difference might be). Others from the same boxset also report incorrect rates:
+
+https://horman.net/cut.mp4
+
+Exactly what framerate is reported seems to vary - sometimes more than 25fps, sometimes less - depending both on the source file and which part of it I cut out with ffmpeg (you can see the wrong framerate in the screenshots below). But it's always the same framerate for the same file.
+
+The same tracks in an MKV container report the correct framerate (25fps).
+
+------------------------------------
+
+Here's an example of audio being corrupt/silent on first load (immediately after indexing): https://i.imgur.com/ar25c5Z.png
+
+This is demonstrated using the same file as linked above. If you step forward and then back, VirtualDub redraws the corrupted frame's audio as silent.
+
+Here's the correct audio, which is always shown on subsequent loads (no indexing required since it's already done): https://i.imgur.com/8Pgp8Uo.png
+
+This happens with both MKV and MP4 containers.
+
+------------------------------------
+
+Also to report BSSource has fixed all of the audio sync issues I thought I was having with FFMpegSource and have already "corrected". So I need to undo all of that :D:eek::D
+
+Myrsloik	23rd February 2025 16:15
+Your FPS sample is weird. I've implemented a fix but it's possible the individual frame timestamps weren't properly reordered to match the b-frame reordering or something => Your file is subtly broken but most things go by container framerate and get it mostly right anyway.
+
+Will investigate the audio issue next.

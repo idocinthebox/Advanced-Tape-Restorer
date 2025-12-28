@@ -1,0 +1,48 @@
+# Advanced Tape Restorer - Quick Setup Guide
+
+## ⚠️ BEFORE FIRST RUN - Install These Tools:
+
+### 1. FFmpeg (REQUIRED)
+- Download: https://www.gyan.dev/ffmpeg/builds/
+- Get: "ffmpeg-release-essentials.zip"
+- Extract and **add to Windows PATH**
+- Test: Open cmd and type `ffmpeg -version`
+
+### 2. VapourSynth (REQUIRED)
+- Download: https://github.com/vapoursynth/vapoursynth/releases
+- Get: Latest R-series release (e.g., R70)
+- Install and **add to Windows PATH**
+- Test: Open cmd and type `vspipe --version`
+
+### 3. Python 3.8+ (OPTIONAL)
+- Download: https://www.python.org/downloads/
+- Check "Add Python to PATH" during install
+- Only needed for AI model management features
+- Test: Open cmd and type `python --version`
+
+---
+
+## ✅ Quick Verification
+
+Open Command Prompt and run:
+```
+ffmpeg -version
+vspipe --version
+python --version
+```
+
+If the first two work, you're ready to go!
+
+---
+
+## 🚀 First Run
+
+1. Double-click `Advanced_Tape_Restorer.exe`
+2. If you see warnings about missing tools, install them first
+3. Test with: File → Select Input → Choose a video → Start Processing
+
+---
+
+**Full instructions:** See `PREREQUISITES_FOR_EXE.md`
+
+**Setup time:** ~20 minutes (one-time only)
