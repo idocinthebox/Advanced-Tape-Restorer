@@ -1,0 +1,120 @@
+========================================
+Advanced Tape Restorer v4.0 - Setup
+Community Edition (FREE - MIT Licensed)
+========================================
+
+QUICK START:
+
+1. Install FFmpeg (required)
+   Run: Install_FFmpeg.bat
+   OR: winget install Gyan.FFmpeg
+
+2. Install VapourSynth (required)
+   Run: Install_VapourSynth.bat
+   Download from: https://github.com/vapoursynth/vapoursynth/releases/tag/R73
+
+3. Install VapourSynth plugins (required)
+   Run: Install_VS_Plugins.bat
+   (After installing VapourSynth)
+
+4. Launch Application
+   Run: Advanced_Tape_Restorer_v4.0.exe
+
+========================================
+SYSTEM REQUIREMENTS
+========================================
+
+Minimum:
+- Windows 10/11 (64-bit)
+- 8 GB RAM
+- 50 GB free disk space
+- Intel/AMD processor
+
+Recommended:
+- 16+ GB RAM
+- NVIDIA GPU with 4+ GB VRAM (for hardware encoding)
+- SSD for scratch disk
+
+========================================
+WHAT'S INCLUDED (v4.0 Community)
+========================================
+
+✓ QTGMC deinterlacing (7 quality presets)
+✓ Denoise filters (BM3D, FFT3D, KNLMeansCL)
+✓ Color correction and grading
+✓ Hardware capture (analog/DV via DirectShow)
+✓ Multi-GPU support
+✓ Hardware encoders (NVENC, AMF, Quick Sync)
+✓ All output codecs (H.264, H.265, ProRes, etc.)
+✓ Batch processing
+✓ Resume interrupted jobs
+
+✗ NO AI upscaling models
+✗ NO ONNX/NPU acceleration
+✗ NO face restoration (GFPGAN)
+✗ NO colorization (DeOldify)
+
+========================================
+UPGRADE TO v4.1 PROFESSIONAL
+========================================
+
+Want AI upscaling? Get v4.1 Professional Edition:
+
+Features added in v4.1:
+- 8 AI upscaling models (RealESRGAN, RIFE, BasicVSR++, SwinIR)
+- ONNX/NPU acceleration (40x faster inference)
+- Face restoration (GFPGAN)
+- B&W colorization (DeOldify)
+- Video inpainting (ProPainter)
+
+Pricing:
+- Early Supporter: $45 (first 200 buyers)
+- Standard: $150 (includes 1yr priority support)
+
+Purchase: https://gumroad.com/l/advanced-tape-restorer-v41
+
+========================================
+TROUBLESHOOTING
+========================================
+
+Q: "FFmpeg not found" error
+A: Restart terminal after installing FFmpeg, or add C:\ffmpeg\bin to PATH
+
+Q: "VapourSynth not found" error
+A: Run Install_VapourSynth.bat, extract to C:\VapourSynth, add to PATH
+
+Q: "QTGMC is not defined" error
+A: Run Install_VS_Plugins.bat to install required VapourSynth plugins
+
+Q: Application won't start
+A: Install Visual C++ Redistributable 2015-2022 from:
+   https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+Q: Hardware capture devices not detected
+A: Check Device Manager, install capture card drivers
+
+========================================
+DOCUMENTATION
+========================================
+
+Full documentation:
+https://github.com/idocinthebox/Advanced-Tape-Restorer
+
+Quick Start Guide:
+https://github.com/idocinthebox/Advanced-Tape-Restorer/blob/main/QUICK_START_GUIDE.md
+
+Support:
+- GitHub Issues: https://github.com/idocinthebox/Advanced-Tape-Restorer/issues
+- Community Forum: https://forum.videohelp.com/
+
+========================================
+LICENSE
+========================================
+
+Advanced Tape Restorer v4.0 Community Edition
+Licensed under MIT License
+
+Copyright (c) 2025 idocinthebox
+
+Free for personal and commercial use.
+See LICENSE file for full terms.
