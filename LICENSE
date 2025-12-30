@@ -1,0 +1,129 @@
+MIT License
+
+Copyright (c) 2025 Advanced Tape Restorer Contributors
+
+================================================================================
+IMPORTANT: This MIT License applies ONLY to Advanced Tape Restorer v4.0 
+(Community Edition - basic restoration features without AI).
+
+Version 4.1+ uses DUAL LICENSING:
+- v4.0 components (core, gui, capture) remain MIT licensed
+- v4.1 AI components (ai_models/, ONNX, PyTorch integration) are PROPRIETARY
+- See LICENSING_GUIDE.md for complete details
+================================================================================
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+
+THIRD-PARTY SOFTWARE LICENSES
+
+This software uses the following third-party components:
+
+1. FFmpeg (https://ffmpeg.org/)
+   License: LGPL 2.1+ or GPL 2+ (depending on build configuration)
+   Used for: Video encoding, decoding, and capture
+
+2. VapourSynth (https://www.vapoursynth.com/)
+   License: LGPL 2.1
+   Used for: Video processing and filtering framework
+
+3. PyTorch (https://pytorch.org/)
+   License: BSD 3-Clause
+   Used for: AI model inference
+
+4. PySide6 (https://doc.qt.io/qtforpython/)
+   License: LGPL 3.0
+   Used for: Graphical user interface
+
+5. QTGMC (http://avisynth.nl/index.php/QTGMC)
+   License: GPL 2.0
+   Used for: Motion-adaptive deinterlacing
+
+6. BM3D (https://github.com/HomeOfVapourSynthEvolution/VapourSynth-BM3D)
+   License: GPL 3.0
+   Used for: Video denoising
+
+================================================================================
+
+AI MODEL LICENSES
+
+The following AI models are NOT included in this repository and are subject
+to their own licenses. Users must download and comply with individual model
+licenses:
+
+1. RealESRGAN
+   License: BSD 3-Clause
+   Authors: Xintao Wang et al., Tencent ARC Lab
+   Commercial use: Allowed
+
+2. GFPGAN
+   License: Non-commercial research use only
+   Authors: Xintao Wang et al., Tencent ARC Lab
+   Commercial use: NOT ALLOWED without permission
+
+3. BasicVSR++
+   License: Apache 2.0
+   Authors: Kelvin C.K. Chan et al., CUHK & SenseTime
+   Commercial use: Allowed
+
+4. SwinIR
+   License: Apache 2.0
+   Authors: Jingyun Liang et al., ETH Zurich
+   Commercial use: Allowed
+
+5. RIFE (Real-Time Intermediate Flow Estimation)
+   License: MIT License
+   Authors: Zhewei Huang et al., MEGVII Technology
+   Commercial use: Allowed
+
+6. DeOldify
+   License: MIT License
+   Author: Jason Antic
+   Commercial use: Allowed
+
+7. ProPainter
+   License: Research/academic use (check original repository)
+   Authors: Shangchen Zhou et al., S-Lab
+   Commercial use: May be restricted - verify license
+
+IMPORTANT NOTICE:
+Users are responsible for ensuring compliance with all applicable AI model
+licenses. Some models (notably GFPGAN and ProPainter) may restrict commercial
+use. Check the ai_models/models/registry.yaml file for current license
+information and source URLs.
+
+================================================================================
+
+COMMERCIAL USE DISCLAIMER
+
+While this software (Advanced Tape Restorer) is MIT licensed and permits
+commercial use, some bundled AI models may have restrictions. Users engaging
+in commercial video restoration must:
+
+1. Review individual AI model licenses in ai_models/models/registry.yaml
+2. Obtain necessary permissions for restricted models
+3. Consider using only commercially-licensed models (RealESRGAN, BasicVSR++,
+   SwinIR, RIFE, DeOldify)
+4. Disable or avoid models with non-commercial restrictions (GFPGAN, ProPainter)
+
+For commercial licensing inquiries regarding future Pro version features
+(network rendering, priority support), contact: [To be added]
+
+================================================================================

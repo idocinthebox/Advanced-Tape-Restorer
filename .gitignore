@@ -1,0 +1,78 @@
+﻿# v4.1 Proprietary AI Components (DO NOT COMMIT)
+ai_models/
+ai_models/*
+convert_models_to_onnx.py
+demo_model.py
+core/onnx_converter.py
+core/torch_jit_optimizer.py
+core/gfpgan_checkpoint_processor.py
+
+# v4.1 Build Artifacts
+*_v4.1.spec
+*_v4.1.exe
+*_v4.1.zip
+*_v4.1_*.txt
+*_v4.1_*.md
+github_release_v4.1/
+github_release_v4.1/*
+Build_GitHub_Release_v4.1.ps1
+
+# v4.1 Documentation (paid version only)
+GITHUB_RELEASE_NOTES_FINAL.md
+GITHUB_RELEASE_V4.1_LEGAL_COMPLIANT.md
+GUMROAD_PRODUCT_DESCRIPTION.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+
+# PyInstaller
+*.spec.bak
+build/
+dist/
+
+# Keep v4.0 public files
+!*_v4.0.spec
+!github_release_v4.0/
+!GITHUB_RELEASE_NOTES_V4.0.md
