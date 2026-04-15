@@ -1,6 +1,0 @@
-Advanced Tape Restorer
-Version 4.0.0-dev
-Release: Development Build
-Date: December 24, 2025
-
-This is the development version for v4.0.

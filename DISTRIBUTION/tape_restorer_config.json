@@ -1,6 +1,0 @@
-{
-    "cache_dir": "./cache",
-    "cache_max_size_gb": 10.0,
-    "cache_ttl_hours": 24,
-    "checkpoint_dir": "./checkpoints"
-}
