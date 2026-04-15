@@ -3,8 +3,13 @@ MIT License
 Copyright (c) 2025 Advanced Tape Restorer Contributors
 
 ================================================================================
-IMPORTANT: This MIT License applies to Advanced Tape Restorer v4.1 and earlier.
-Version 4.2+ uses a dual licensing model. See LICENSING_GUIDE.md for details.
+IMPORTANT: This MIT License applies ONLY to Advanced Tape Restorer v4.0 
+(Community Edition - basic restoration features without AI).
+
+Version 4.1+ uses DUAL LICENSING:
+- v4.0 components (core, gui, capture) remain MIT licensed
+- v4.1 AI components (ai_models/, ONNX, PyTorch integration) are PROPRIETARY
+- See LICENSING_GUIDE.md for complete details
 ================================================================================
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

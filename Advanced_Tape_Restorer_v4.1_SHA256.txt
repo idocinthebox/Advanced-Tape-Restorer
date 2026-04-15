@@ -1,0 +1,29 @@
+﻿Advanced Tape Restorer v4.1.0 - SHA256 Checksums
+================================================
+
+Advanced_Tape_Restorer_v4.1.exe:
+4293E5B971278E968BD3322E66EC9364ED834105ED87A03D50F31628982FEA98
+
+Advanced_Tape_Restorer_v4.1_Windows.zip:
+FD48768F78ED28DDEAC024CD39BC155A0C8ADAF88247318F08C5CF4EFF527F62
+
+Verification Instructions:
+--------------------------
+Windows PowerShell:
+  Get-FileHash "filename.exe" -Algorithm SHA256
+
+Windows CMD:
+  certutil -hashfile "filename.exe" SHA256
+
+Compare the output hash with the values above. They must match exactly.
+
+Build Information:
+------------------
+Version: 4.1.0
+Build Date: December 29, 2025
+License: MIT (see LICENSE file)
+Python: 3.13.9
+PyInstaller: 6.16.0
+
+EXE File Size: ~3.0 GB (includes PyTorch, ONNX, all AI dependencies)
+ZIP Contents: EXE + LICENSE + README + config files + setup batch files (13 files)

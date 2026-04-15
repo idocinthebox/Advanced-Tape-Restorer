@@ -1,0 +1,47 @@
+﻿Advanced Tape Restorer v4.0 - Community Edition (FREE - MIT Licensed)
+========================================================================
+
+SHA256 Checksums:
+-----------------
+
+EXE (Standalone):
+694930539F61D94D380494EF8E2C60244D2DC2FB37B0EDEF715777B1B9AD4B39  Advanced_Tape_Restorer_v4.0.exe
+
+ZIP (Complete Package):
+91BD692ED4EB6336A86AEEAE68D160F72457FB337FD82E840AB95274BE246BD0  Advanced_Tape_Restorer_v4.0_Community_Edition.zip
+
+
+Verification Instructions:
+--------------------------
+
+Windows PowerShell:
+  Get-FileHash "Advanced_Tape_Restorer_v4.0_Community_Edition.zip" -Algorithm SHA256
+
+Windows CMD:
+  certutil -hashfile "Advanced_Tape_Restorer_v4.0_Community_Edition.zip" SHA256
+
+
+File Sizes:
+-----------
+EXE:  45.92 MB
+ZIP:  45.64 MB
+
+Build Information:
+------------------
+Version:    4.0.0 (Community Edition - No AI)
+Build Date: 2025-12-30 01:47:53
+Python:     3.13.9
+Platform:   Windows 64-bit
+License:    MIT
+
+What's Included:
+----------------
+ Basic restoration (QTGMC, denoise, color correction)
+ Hardware capture (DirectShow, DV/FireWire)
+ Multi-GPU support and hardware encoders
+ Threaded I/O and checkpoint/resume
+ All output formats (ProRes, DNxHD, H.265, etc.)
+
+ NO AI features (no RealESRGAN, RIFE, etc.)
+ For AI upscaling, see v4.1 (paid - /)
+
