@@ -74,6 +74,7 @@ ai_models/models/*.pth
 ai_models/models/*.onnx
 ai_models/models/*.pt
 !ai_models/models/registry.yaml
+gfpgan/weights/
 
 # Checkpoints (user-specific)
 checkpoints/
