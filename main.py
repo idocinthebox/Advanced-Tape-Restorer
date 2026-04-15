@@ -1,11 +1,11 @@
 """
-Advanced Tape Restorer v4.1
+Advanced Tape Restorer v4.0
 Professional Video Restoration & Capture Suite with Theatre Mode
 
 Entry point for the application
 """
 
-__version__ = "4.1.0"
+__version__ = "4.0.0"
 __author__ = "AI Agent Team"
 
 # Development bypass for NDA (set to True during development/testing)
