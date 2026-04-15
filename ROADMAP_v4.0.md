@@ -599,12 +599,29 @@ Commercial Features:
 
 Pricing Strategy:
 ~~~~~~~~~~~~~~~~
-Free Version (v4.0):
+Free Version (v4.1):
   - Single-machine processing
   - All AI models included
+  - ONNX/NPU acceleration
   - Community support
 
-Pro Version:
+Early Supporter Edition (v4.2 - Limited Time):
+  - One-time payment: $45 (70% OFF)
+  - Limited to first 500 supporters OR until v4.2 official release
+  - Lifetime v4.2 updates
+  - Community support
+  - Same features as Standard Edition
+  - Upgrade to Standard support: +$105
+
+Standard Version (v4.2):
+  - One-time payment: $150
+  - Includes 1 year priority support
+  - All AI models + ONNX/NPU acceleration
+  - After 1 year: Community support OR renew priority support at $75/year
+  - Single-machine processing
+  - Lifetime software updates
+
+Pro Version (v5.0+ - Network Distributed Rendering):
   - Network distributed rendering
   - $75/node/month subscription
   - Priority email support (48h response)

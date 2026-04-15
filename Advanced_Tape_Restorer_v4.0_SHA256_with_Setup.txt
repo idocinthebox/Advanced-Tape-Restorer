@@ -1,0 +1,31 @@
+﻿========================================
+Advanced Tape Restorer v4.0 Community Edition
+SHA256 Checksums
+========================================
+
+ZIP Package (with setup files):
+File: Advanced_Tape_Restorer_v4.0_Community_Edition_with_Setup.zip
+SHA256: 8ADF7FB1102AA87D265E18399AFEDDCC9257D0A306E7CB86DA9B63E26811196F
+Size: 45.65 MB
+
+Executable:
+File: Advanced_Tape_Restorer_v4.0.exe
+SHA256: 694930539F61D94D380494EF8E2C60244D2DC2FB37B0EDEF715777B1B9AD4B39
+Size: 45.92 MB
+
+========================================
+VERIFICATION
+========================================
+
+Windows PowerShell:
+  $hash = (Get-FileHash 'Advanced_Tape_Restorer_v4.0_Community_Edition_with_Setup.zip' -Algorithm SHA256).Hash
+  if ($hash -eq '8ADF7FB1102AA87D265E18399AFEDDCC9257D0A306E7CB86DA9B63E26811196F') { Write-Host 'VERIFIED' -ForegroundColor Green } else { Write-Host 'CORRUPTED' -ForegroundColor Red }
+
+Windows Command Prompt:
+  certutil -hashfile Advanced_Tape_Restorer_v4.0_Community_Edition_with_Setup.zip SHA256
+
+Linux/Mac:
+  shasum -a 256 Advanced_Tape_Restorer_v4.0_Community_Edition_with_Setup.zip
+
+========================================
+Generated: 2025-12-30 11:57:17

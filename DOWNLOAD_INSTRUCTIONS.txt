@@ -1,0 +1,253 @@
+# Download & Installation Instructions
+
+## Advanced Tape Restorer v4.1.0
+
+Thank you for downloading Advanced Tape Restorer!
+
+---
+
+## 📥 What You Downloaded
+
+**Advanced_Tape_Restorer_v4.1.exe** (3.0 GB)
+- Complete standalone application
+- Includes Python 3.13 runtime
+- Includes PyTorch, ONNX Runtime, and all AI dependencies
+- No installation required!
+
+---
+
+## ✅ First-Time Setup (5 minutes)
+
+### Step 1: Verify Download
+Ensure the file downloaded completely and is not corrupted:
+
+**Windows PowerShell:**
+```powershell
+Get-FileHash "Advanced_Tape_Restorer_v4.1.exe" -Algorithm SHA256
+```
+
+**Expected SHA256:**
+```
+4293E5B971278E968BD3322E66EC9364ED834105ED87A03D50F31628982FEA98
+```
+
+If the hash doesn't match, re-download the file.
+
+### Step 2: Install Prerequisites
+
+The EXE is standalone, but you need these external tools:
+
+#### **1. FFmpeg** (Required for video encoding)
+- Download: https://www.gyan.dev/ffmpeg/builds/
+- Choose: "ffmpeg-release-essentials.zip"
+- Extract to `C:\ffmpeg\`
+- Add to PATH:
+  1. Search Windows for "Environment Variables"
+  2. Edit "Path" system variable
+  3. Add `C:\ffmpeg\bin`
+  4. Click OK
+
+**Verify:** Open CMD and run `ffmpeg -version`
+
+#### **2. VapourSynth R73** (Required for video filtering)
+- Download: https://github.com/vapoursynth/vapoursynth/releases/tag/R73
+- Choose: `VapourSynth64-R73.exe`
+- Run installer (default settings OK)
+- Restart computer after installation
+
+**Verify:** Open CMD and run `vspipe --version`
+
+#### **3. CUDA Toolkit** (Optional - for NVIDIA GPU acceleration)
+Only needed if you have an NVIDIA GPU and want AI features:
+- Download: https://developer.nvidia.com/cuda-downloads
+- Choose: CUDA 11.8 or 12.1
+- Run installer
+
+**Verify:** Open CMD and run `nvcc --version`
+
+#### **4. ONNX Runtime (DirectML)** (Optional - for NPU/AMD GPU acceleration)
+For Intel NPU or AMD GPUs:
+```powershell
+pip install onnxruntime-directml
+```
+
+### Step 3: Run the Application
+1. Double-click `Advanced_Tape_Restorer_v4.1.exe`
+2. First launch may take 30-60 seconds (extracting temp files)
+3. GUI window will open
+
+**If Windows SmartScreen blocks it:**
+- Click "More info"
+- Click "Run anyway"
+- This is normal for unsigned executables
+
+---
+
+## 🚀 Quick Start Guide
+
+### Your First Restoration
+
+1. **Launch** the application
+2. **Go to Restoration tab** (default)
+3. **Select input video:**
+   - Click "Browse" next to Input File
+   - Choose a VHS/Hi8/DV capture file
+4. **Choose preset:**
+   - "VHS - Medium Quality" (good balance)
+   - Or customize settings
+5. **Select output location:**
+   - Click "Browse" next to Output File
+   - Choose filename and format (MP4/MKV)
+6. **Click "Start Processing"**
+7. **Monitor progress bar** and log output
+8. **Wait for completion** (time depends on video length and settings)
+
+### Key Features to Try
+
+**Deinterlacing:**
+- Enable "Deinterlace" checkbox
+- Select QTGMC preset (Medium or Slower recommended)
+- Essential for VHS/analog footage
+
+**AI Upscaling:**
+- Enable "AI Upscale" checkbox
+- Choose model:
+  - RealESRGAN: 4x upscaling (best quality, slower)
+  - SwinIR: 2x/3x/4x options
+  - ZNEDI3: 2x upscaling (faster)
+- Select inference mode:
+  - **Auto:** Chooses best based on VRAM
+  - **PyTorch:** Uses GPU (8GB+ VRAM needed)
+  - **ONNX:** Uses NPU/DirectML (low VRAM)
+
+**AI Frame Interpolation:**
+- Enable "Frame Interpolation" checkbox
+- Choose RIFE model
+- Select multiplier (2x = 30fps → 60fps)
+- Smooths motion, great for old footage
+
+**Noise Reduction:**
+- Enable "Temporal Noise Reduction"
+- Adjust strength (1-3 recommended)
+- Reduces VHS tape hiss
+
+---
+
+## 💾 System Requirements
+
+**Minimum (CPU Processing):**
+- Windows 10/11 (64-bit)
+- Intel Core i5 or AMD Ryzen 5
+- 8GB RAM
+- 10GB free disk space
+- FFmpeg and VapourSynth installed
+
+**Recommended (GPU Acceleration):**
+- Intel Core i7/Ryzen 7 or better
+- 16GB+ RAM
+- **NVIDIA GPU:** GTX 1660 or better (8GB+ VRAM)
+- **NPU:** Intel Core Ultra or AMD Ryzen AI
+- 50GB+ free disk space (for large projects)
+
+**For 4K AI Processing:**
+- NVIDIA RTX 3080 (10GB VRAM) or better
+- 32GB system RAM
+- Use ONNX mode to reduce VRAM usage
+
+---
+
+## 🐛 Troubleshooting
+
+### "Failed to execute script"
+- **Cause:** Missing FFmpeg or VapourSynth
+- **Fix:** Install prerequisites (Step 2 above)
+
+### "CUDA out of memory"
+- **Cause:** AI model too large for GPU
+- **Fix:** Switch to ONNX inference mode (uses NPU instead)
+
+### "vspipe not found"
+- **Cause:** VapourSynth not installed or not on PATH
+- **Fix:** Reinstall VapourSynth R73, restart computer
+
+### Application crashes on startup
+- **Cause:** Antivirus blocking temp file extraction
+- **Fix:** Add exception for Advanced_Tape_Restorer_v4.1.exe
+
+### Slow processing speed
+- **Check:** Is GPU being used? Look for "Using device: cuda:0" in logs
+- **If CPU-only:** Install CUDA Toolkit for NVIDIA GPUs
+- **Alternative:** Use ONNX mode (40x faster than CPU PyTorch)
+
+### First ONNX inference slow (~500ms)
+- **This is normal** - DirectML compiles model to NPU on first frame
+- Subsequent frames will be 2-5ms
+
+---
+
+## 📚 Documentation
+
+**Full guides available in the GitHub repo:**
+- [README.md](https://github.com/YOUR_USERNAME/Advanced-Tape-Restorer) - Project overview
+- [QUICK_START_GUIDE.md](https://github.com/YOUR_USERNAME/Advanced-Tape-Restorer/blob/main/QUICK_START_GUIDE.md) - Detailed setup
+- [VERSION_FEATURE_MATRIX.md](https://github.com/YOUR_USERNAME/Advanced-Tape-Restorer/blob/main/VERSION_FEATURE_MATRIX.md) - Feature comparison
+
+---
+
+## 💬 Support
+
+**Free Support:**
+- GitHub Issues: https://github.com/YOUR_USERNAME/Advanced-Tape-Restorer/issues
+- Community forums: r/DataHoarder, r/VHS
+
+**Commercial Support (Coming in v4.2):**
+- Priority email support
+- 1-year support included with license
+- Video call troubleshooting
+
+---
+
+## 📝 License
+
+This software is licensed under the **MIT License**.
+
+You are free to:
+- ✅ Use for personal or commercial projects
+- ✅ Modify and redistribute
+- ✅ Share with friends/family
+- ✅ Use in your business
+
+No warranty provided. See LICENSE file for full terms.
+
+---
+
+## ❤️ Support Development
+
+If this software saved your precious memories:
+- ⭐ Star the repo on GitHub
+- 📢 Share with others who need it
+- 💡 Report bugs or suggest features
+- 💰 Consider purchasing v4.2 (coming Q2 2026) to support continued development
+
+---
+
+## 🎯 What's Next?
+
+**v4.2 Commercial Release (Q2 2026):**
+- Audio restoration (FFT noise reduction, declicking)
+- Project management system
+- Scene detection with auto-splitting
+- Batch processing presets
+- Priority email/video support
+
+**v5.0 Pro/Enterprise - Network Rendering:**
+- Multi-machine distributed processing
+- Render farm support for studios
+- REST API for automation
+
+See VERSION_FEATURE_MATRIX.md for complete roadmap.
+
+---
+
+**Enjoy restoring your analog memories!** 📼➡️💾
+

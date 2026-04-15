@@ -1,122 +1,263 @@
-# Advanced Tape Restorer
+# Advanced Tape Restorer v4.1
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Platform: Windows](https://img.shields.io/badge/platform-Windows%2010%2F11-blue.svg)](https://www.microsoft.com/windows)
-[![Community Version](https://img.shields.io/badge/community-v4.0-green.svg)](https://github.com/idocinthebox/Advanced-Tape-Restorer/releases/tag/v4.0.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Platform: Windows](https://img.shields.io/badge/platform-Windows-blue.svg)](https://www.microsoft.com/windows)
+[![GitHub release](https://img.shields.io/github/v/release/idocinthebox/Advanced-Tape-Restorer)](https://github.com/idocinthebox/Advanced-Tape-Restorer/releases)
 
-Advanced Tape Restorer is a Windows-first video restoration and capture tool for analog and DV media.
+**Professional Video Restoration & Capture Suite with AI Enhancement**
 
-This public repository remains the home of the MIT-licensed v4.0 Community Edition.
+Advanced Tape Restorer is a powerful desktop application for capturing and restoring analog/DV tapes to high-quality digital video. Features professional-grade VapourSynth filtering, AI-powered upscaling/deinterlacing, NPU acceleration, and checkpoint-based resumable processing for multi-hour jobs.
 
-The actively sold commercial product line is Advanced Tape Restorer v6.0, which adds professional workflow features, the add-on marketplace, and separately licensed premium engines.
+---
 
-## Repository Status
+## 📋 Table of Contents
 
-- `v4.0 Community Edition` stays free and MIT licensed in this repository.
-- `v6.0` is the current commercial application line.
-- `LTX Generative Repair` is a separate paid add-on for v6.0, not part of the free community edition.
+- [✨ Key Features](#-key-features)
+- [📦 Installation](#-installation)
+- [🚀 Quick Start Guide](#-quick-start-guide)
+- [🤖 AI Models](#-ai-models)
+- [⚙️ Technical Architecture](#️-technical-architecture)
+- [🎬 Usage Examples](#-usage-examples)
+- [🗺️ Roadmap](#️-roadmap)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
 
-## Community Edition v4.0
+---
 
-The public repo is for users who want the free baseline restoration tool and for developers who want to inspect or build on the open community codebase.
+## 🎯 Project Vision
 
-### Included in v4.0 Community Edition
+Version 2.0 represents a complete architectural redesign with clear separation of concerns:
+- **Core Processing**: Independent video restoration engine
+- **Capture Module**: Professional tape capture capabilities
+- **GUI Layer**: Modern PySide6 interface
+- **Modular Design**: Each component can be modified without affecting others
 
-- QTGMC deinterlacing with quality presets for interlaced VHS, Hi8, Video8, and DV sources
-- Traditional restoration filters for denoise, sharpening, color correction, crop, resize, and cleanup
-- Windows capture workflows for analog capture hardware and DV/FireWire devices
-- Multi-codec export including H.264, H.265, ProRes, DNxHD/DNxHR, FFV1, and AV1 options
-- Batch processing, resumable jobs, threaded I/O, and multi-GPU aware infrastructure
-- MIT-licensed source code for the public community release
+## 📁 Project Structure
 
-### What v4.0 Does Not Include
+```
+Advanced Tape Restorer v4.1/
+├── core/                      # Video processing engine (independent)
+│   ├── __init__.py
+│   ├── processor.py          # Main orchestrator
+│   ├── video_analyzer.py     # Metadata & field order detection
+│   ├── vapoursynth_engine.py # VapourSynth script generation
+│   └── ffmpeg_encoder.py     # FFmpeg encoding with progress
+│
+├── capture/                   # Video capture module (NEW)
+│   ├── __init__.py
+│   ├── device_manager.py     # Device detection & management
+│   ├── analog_capture.py     # Analog/VHS capture engine
+│   └── dv_capture.py         # DV/miniDV FireWire capture
+│
+├── gui/                       # PySide6 GUI (to be created)
+│   ├── __init__.py
+│   ├── main_window.py        # Main application window
+│   ├── restoration_tab.py    # Restoration controls
+│   ├── capture_tab.py        # Capture interface (NEW)
+│   └── dialogs/              # Preset manager, batch queue, etc.
+│
+├── config/                    # Configuration & settings
+│   └── default_settings.json
+│
+└── docs/                      # Documentation
+    ├── API.md                # API reference for modules
+    ├── CAPTURE_GUIDE.md      # Capture workflow documentation
+    └── ARCHITECTURE.md       # Technical architecture details
+```
 
-- The current commercial v6.0 UI and workflow set
-- The add-ons page and commercial engine marketplace
-- Separately sold engines such as LTX Generative Repair
-- Current commercial support, entitlement, or purchase flows
+## ✨ Key Features
 
-## Current Commercial Release: v6.0
+### 🎥 Video Restoration
+- **Professional deinterlacing** - QTGMC with 7 quality presets (Draft → Placebo)
+- **AI upscaling** - RealESRGAN, BasicVSR++, SwinIR (SD→HD/4K)
+- **AI interpolation** - RIFE frame rate boosting (2x-4x)
+- **AI restoration** - GFPGAN face enhancement, DeOldify colorization, ProPainter inpainting
+- **Advanced filtering** - BM3D denoising, VHS artifact removal, chroma restoration
+- **Smart field order detection** - Automatic TFF/BFF/Progressive analysis
+- **NPU acceleration** - ONNX inference with DirectML (40x faster, 98% smaller models)
+- **Multi-GPU support** - Heterogeneous workload distribution (NVIDIA + AMD + Intel)
 
-Advanced Tape Restorer v6.0 is the current production release line for live sales. It builds on the restoration and capture foundation with a broader professional workflow.
+### 📼 Tape Capture (NEW in v4.0)
+- **Analog capture** - VHS, Hi8, Video8, Betamax support via DirectShow
+- **DV/FireWire capture** - miniDV, HDV with stream copy
+- **Device detection** - Automatic capture card discovery
+- **Input selection** - Composite, S-Video, Component
 
-### v6.0 Highlights
+### 💪 Reliability & Performance
+- **Checkpoint system** - Auto-save every 50-100 frames, resume after crashes (NEW in v4.0)
+- **Disk space protection** - Pre-flight checks, 508GB exhaustion prevention (NEW in v4.0)
+- **Frame migration** - Automatic drive switching for multi-TB projects (NEW in v4.0)
+- **PyTorch JIT compilation** - 20-30% AI performance boost (NEW in v4.0)
+- **Threaded I/O** - Parallel disk operations eliminate bottlenecks (NEW in v4.0)
 
-- Fluent desktop UI for restoration, capture, analysis, diagnostics, scene editing, plugins, music, and preset comparison
-- Add-ons page for commercial engines and premium feature delivery
-- Engine/plugin architecture with diagnostics, dependency checks, and asset validation
-- Hardware capture page with multiple archival codecs and embedded preview playback
-- Community plugin pipeline with pre-filter, post-filter, and post-encode hooks
-- Scene editor with in/out markers, processed-preview shortcuts, and music integration
-- Per-frame VMAF, PSNR, and SSIM analysis with graph and CSV export
-- Music library with local scan plus online and local AI generation sources
-- NVIDIA VFX integration for upscale, denoise, and deblur when supported hardware is available
-- Colorspace auto-detection, preflight checks, and broader workflow reliability improvements
+### 🎛️ User Experience
+- **Live preview** - See results before processing
+- **Batch processing** - Queue multiple restoration jobs
+- **Preset system** - Save/load restoration configurations
+- **Progress tracking** - Real-time ETA and frame-by-frame status
+- **Multiple codecs** - ProRes, DNxHD, H.264/H.265/AV1, lossless options
 
-## LTX Generative Repair Add-on
+## ⚙️ Technical Architecture
 
-LTX Generative Repair is a separately sold v6.0 add-on module.
+### Processing Pipeline
 
-It is designed for difficult defects that are not handled well by standard restoration filters alone, such as:
+```
+Input Video → VapourSynth Filters → FFmpeg Encoder → Output Video
+    ↓
+  .vpy script (generated dynamically)
+    ↓
+  vspipe.exe (external process)
+    ↓
+  YUV frames (piped)
+    ↓
+  ffmpeg.exe (encoding)
+```
 
-- large scratches and tears
-- damaged regions that need reconstructed detail
-- object removal and fill
-- localized repair workflows guided by masks and region selection
+**Key Design:** VapourSynth runs as separate process, cannot import from PyInstaller EXE
 
-### Product Positioning
+### Modular Structure
 
-- Requires the commercial v6.0 app line
-- Purchased separately from the base v6.0 license
-- Delivered as an add-on engine package rather than bundled into the community repo
-- Intended to appear in the v6.0 add-ons workflow as a dedicated repair module
+```
+core/                      # Video processing engine
+├── processor.py          # Main orchestrator (vspipe → ffmpeg)
+├── vapoursynth_engine.py # .vpy script generation
+├── ffmpeg_encoder.py     # Encoding with progress tracking
+├── ai_bridge.py          # AI model integration
+├── disk_space_manager.py # Pre-flight space checks (NEW v4.0)
+├── resumable_processor.py # Checkpoint base class (NEW v4.0)
+├── gfpgan_checkpoint_processor.py # GFPGAN with checkpoints (NEW v4.0)
+├── propainter_checkpoint_processor.py # ProPainter checkpoints (NEW v4.0)
+├── torch_jit_optimizer.py # PyTorch compilation (NEW v4.0)
+├── threaded_io.py        # Async file operations (NEW v4.0)
+├── multi_gpu_manager.py  # GPU detection & distribution (NEW v4.0)
+└── onnx_converter.py     # ONNX model conversion (NEW v4.1)
 
-## Browse Commercial Engines
+capture/                   # Hardware capture (NEW v4.0)
+├── device_manager.py     # DirectShow device detection
+├── analog_capture.py     # Analog capture via FFmpeg
+└── dv_capture.py         # DV/FireWire capture
 
-- Public engine catalog: https://github.com/idocinthebox/atr-engines
-- Machine-readable marketplace feed: https://raw.githubusercontent.com/idocinthebox/atr-engines/main/engines-index.json
+gui/                       # PySide6 interface
+├── main_window.py        # Main UI (3 tabs: Restoration/Capture/Batch)
+├── processing_thread.py  # Background worker with Qt signals
+├── checkpoint_resume_dialog.py # Resume incomplete jobs (NEW v4.0)
+└── settings_manager.py   # JSON-based settings persistence
 
-## Version Guide
+ai_models/                 # AI model system
+├── model_manager.py      # Download, verify, cache models
+├── engines/              # Per-engine implementations
+│   ├── realesrgan.py
+│   ├── rife.py
+│   ├── basicvsrpp.py
+│   └── ... (11 engines total)
+└── models/
+    └── registry.yaml     # URLs, SHA256, licenses
+```
 
-See [VERSION_FEATURE_MATRIX.md](VERSION_FEATURE_MATRIX.md) for the current high-level split between the free community release and the commercial line.
+### Threading Model
 
-See [LICENSING_GUIDE.md](LICENSING_GUIDE.md) for the current licensing model.
+- **Main thread:** PySide6 GUI event loop
+- **Worker thread:** Video processing (`ProcessingThread` class)
+- **Monitor threads:** Capture status, live preview
+- **Communication:** Qt signals/slots (thread-safe)
 
-## Installation
+### Data Flow
 
-### Community Edition from Source
+1. User selects options in GUI
+2. Options saved to `restoration_settings.json`
+3. `ProcessingThread` calls `VideoProcessor.process_video()`
+4. VapourSynth script generated to `%TEMP%\tape_restorer_XXXXX.vpy`
+5. `vspipe.exe` spawned as subprocess, pipes YUV frames
+6. `ffmpeg.exe` spawned as subprocess, encodes piped frames
+7. Progress parsed from FFmpeg stderr, emitted via Qt signal
+8. GUI updates progress bar, ETA, log window
+
+### Checkpoint System (v4.0)
+
+**Architecture:**
+- `ResumableProcessor` base class - Generic checkpoint save/load/resume logic
+- `GFPGANCheckpointProcessor` wrapper - Frame-level checkpoints for GFPGAN
+- `ProPainterCheckpointProcessor` wrapper - Process-level checkpoints for ProPainter
+- Checkpoints stored: `%LOCALAPPDATA%\Advanced_Tape_Restorer\checkpoints\`
+- Resume detection: `QTimer.singleShot(1000)` on startup shows dialog
+
+**Frame Migration:**
+- Detects output directory change between checkpoint and resume
+- Automatically copies all frames/files from old drive to new drive
+- Uses `shutil.copy2()` with progress logging every 100 items
+- Ensures FFmpeg reads all frames from single consolidated directory
+
+## � Installation
+
+### Prerequisites
+
+**Required:**
+- **Windows 10/11** (64-bit)
+- **FFmpeg 6.0+** - Video encoding and metadata extraction
+  - Download: https://ffmpeg.org/download.html
+  - Add to PATH: `ffmpeg.exe`, `ffprobe.exe`
+- **VapourSynth R65+** (R73 recommended) - Video processing framework
+  - Download: https://github.com/vapoursynth/vapoursynth/releases
+  - Add to PATH: `vspipe.exe`
+- **Python 3.8-3.12** - Runtime environment
+
+**Optional (for AI features):**
+- **CUDA 11.8/12.1** - GPU acceleration for AI models
+- **DirectML** - NPU/GPU acceleration for ONNX inference (NEW in v4.1)
+- **vs-realesrgan** - VapourSynth plugin (`vsrepo install realesrgan`)
+- **vs-rife** - Frame interpolation plugin (`vsrepo install rife`)
+
+### Quick Start
+
+1. **Download latest release** from GitHub Releases
+2. **Extract** `Advanced_Tape_Restorer_v4.1.zip`
+3. **Double-click** `Advanced_Tape_Restorer_v4.1.exe`
+4. **First launch** will check prerequisites and extract AI models
+
+### Installation Scripts (Optional)
+
+The `UTILITIES/` folder contains setup helpers:
+- `Install_FFmpeg.bat` - Automated FFmpeg installation
+- `Install_VapourSynth.bat` - VapourSynth setup with plugins
+- `Install_ONNX_Runtime_NPU.bat` - NPU acceleration setup (NEW in v4.1)
+- `Install_PyTorch_CUDA.bat` - GPU acceleration setup
+
+### Development Setup
 
 ```powershell
+# Clone repository
 git clone https://github.com/idocinthebox/Advanced-Tape-Restorer.git
 cd Advanced-Tape-Restorer
+
+# Create virtual environment
 python -m venv .venv
 .venv\Scripts\Activate.ps1
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Run from source
 python main.py
 ```
 
-### Community Edition Requirements
+## 🚀 Quick Start Guide
 
-- Windows 10 or 11
-- FFmpeg on `PATH`
-- VapourSynth on `PATH`
-- Python environment for source-based usage
+### Basic Restoration Workflow
 
-## Documentation
+1. **Load video** - Click "Browse" and select your captured tape file
+2. **Select preset** - Choose quality level (Fast/Balanced/Quality/Maximum)
+3. **Configure options**:
+   - **Deinterlacing**: QTGMC preset (Slow/Very Slow for best quality)
+   - **Upscaling**: Enable AI upscaling if going SD→HD/4K
+   - **Denoising**: BM3D for tape noise removal
+4. **Preview** - Click "Preview" to test settings on short clip
+5. **Process** - Click "Start Processing" and monitor progress
+6. **Resume support** - If interrupted, restart app and click "Resume" in startup dialog
 
-- [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
-- [LICENSING_GUIDE.md](LICENSING_GUIDE.md)
-- [LICENSE_SUMMARY_FOR_BUYERS.md](LICENSE_SUMMARY_FOR_BUYERS.md)
-- [VERSION_FEATURE_MATRIX.md](VERSION_FEATURE_MATRIX.md)
-- [ROADMAP_v4.0.md](ROADMAP_v4.0.md)
+### Capture Workflow (NEW in v4.0)
 
-## License
-
-This repository is published under the MIT License for the v4.0 community code.
-
-Commercial releases, premium workflow modules, and separately sold add-ons are not granted under the MIT license simply by being described here.
-
-See [LICENSE](LICENSE) and [LICENSING_GUIDE.md](LICENSING_GUIDE.md) for details.
 1. **Connect capture device** - Elgato, Diamond VC500, AVerMedia, etc.
 2. **Switch to Capture tab**
 3. **Select device** - Choose from detected analog/DV devices
