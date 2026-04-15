@@ -43,5 +43,5 @@ What's Included:
  All output formats (ProRes, DNxHD, H.265, etc.)
 
  NO AI features (no RealESRGAN, RIFE, etc.)
- For AI upscaling, see v4.1 (paid - /)
+ For AI upscaling, see v6.0 Professional (paid)
 
