@@ -76,6 +76,9 @@ ai_models/models/*.pt
 !ai_models/models/registry.yaml
 gfpgan/weights/
 
+# Large test/binary artifacts
+*.bin
+
 # Checkpoints (user-specific)
 checkpoints/
 *.checkpoint
